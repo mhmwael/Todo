@@ -64,7 +64,6 @@ class TasksPage
                   ),
                 ),
 
-                // Category Filter Chips
                 TaskFilterChips(
                   onCategoryChanged:
                       (

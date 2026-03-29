@@ -134,7 +134,6 @@ class TasksPage
                         ),
                 ),
 
-                // Add Task Button
                 Padding(
                   padding: const EdgeInsets.all(
                     16.0,
@@ -142,9 +141,7 @@ class TasksPage
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: Show add task bottom sheet
-                      },
+                      onPressed: () {},
                       icon: const Icon(
                         Icons.add,
                       ),

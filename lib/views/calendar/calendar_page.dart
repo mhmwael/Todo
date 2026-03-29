@@ -13,60 +13,50 @@ class CalendarPage
   build(
     BuildContext context,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Top padding for notification bar
-        SizedBox(
-          height:
-              MediaQuery.of(
-                context,
-              ).padding.top +
-              8,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Calendar',
         ),
-        Padding(
+        backgroundColor: Theme.of(
+          context,
+        ).scaffoldBackgroundColor,
+        elevation: 0,
+        foregroundColor: Theme.of(
+          context,
+        ).textTheme.displayLarge?.color,
+      ),
+      body: Center(
+        child: Padding(
           padding: const EdgeInsets.all(
-            16.0,
+            32.0,
           ),
-          child: Text(
-            'Calendar',
-            style: Theme.of(
-              context,
-            ).textTheme.displayLarge,
-          ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(
-              32.0,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.calendar_today,
-                  size: 64,
-                  color: AppColors.primary.withOpacity(
-                    0.3,
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.calendar_today,
+                size: 64,
+                color: AppColors.primary.withOpacity(
+                  0.3,
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Text(
-                  'Calendar view coming soon',
-                  style:
-                      Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                'Calendar view coming soon',
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

@@ -165,10 +165,6 @@ class _TaskFilterChipsState
                                                 ).textTheme.titleMedium,
                                               ),
                                               trailing: IconButton(
-                                                icon: const Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
                                                 onPressed: () {
                                                   controller.deleteCategory(
                                                     category.id!,
@@ -186,11 +182,34 @@ class _TaskFilterChipsState
                                                     ),
                                                   );
                                                 },
+                                                icon: Container(
+                                                  padding: const EdgeInsets.all(
+                                                    8,
+                                                  ), // circle size
+                                                  decoration: BoxDecoration(
+                                                    color: const Color.fromARGB(
+                                                      255,
+                                                      237,
+                                                      237,
+                                                      237,
+                                                    ), // grey background
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
                                               ),
                                               tileColor: AppColors.surface,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                  8.0,
+                                                ),
+                                              ),
                                               contentPadding: const EdgeInsets.symmetric(
                                                 horizontal: 16.0,
-                                                vertical: 8.0,
+                                                vertical: 4.0,
                                               ),
                                             ),
                                           );

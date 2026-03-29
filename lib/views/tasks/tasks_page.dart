@@ -30,7 +30,6 @@ class TasksPage
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top padding for notification bar
                 SizedBox(
                   height:
                       MediaQuery.of(

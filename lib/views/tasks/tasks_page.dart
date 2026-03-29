@@ -80,7 +80,6 @@ class TasksPage
                   height: 16,
                 ),
 
-                // Pending Tasks List
                 Expanded(
                   child: taskController.pendingTasks.isEmpty
                       ? Center(

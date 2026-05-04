@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../models/task.dart';
 import '../models/user_stats.dart';
@@ -9,7 +10,40 @@ class ProfileController extends ChangeNotifier {
     streak: 0,
   );
 
+  String? _profileImagePath;
+  File? _profileImageFile;
+  bool _isLoggedIn = false;
+  String _userName = 'Guest User';
+
   UserStats get stats => _stats;
+  String? get profileImagePath => _profileImagePath;
+  File? get profileImageFile => _profileImageFile;
+  bool get isLoggedIn => _isLoggedIn;
+  String get userName => _userName;
+
+  void setProfileImage(String path) {
+    _profileImagePath = path;
+    _profileImageFile = null;
+    notifyListeners();
+  }
+
+  void setProfileImageFile(File file) {
+    _profileImageFile = file;
+    _profileImagePath = null;
+    notifyListeners();
+  }
+
+  void login() {
+    _isLoggedIn = true;
+    _userName = 'Jules Engineer';
+    notifyListeners();
+  }
+
+  void logout() {
+    _isLoggedIn = false;
+    _userName = 'Guest User';
+    notifyListeners();
+  }
 
   void updateStats(List<Task> allTasks) {
     final completedCount = allTasks.where((task) => task.isCompleted).length;

@@ -72,14 +72,22 @@ class _AddTaskDialogState
       lastDate: DateTime(2035),
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       builder: (context, child) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: AppColors.textPrimary,
-            ),
+            colorScheme: isDarkMode
+                ? ColorScheme.dark(
+                    primary: AppColors.primary,
+                    onPrimary: Colors.white,
+                    surface: const Color(0xFF1E1E1E),
+                    onSurface: Colors.white,
+                  )
+                : ColorScheme.light(
+                    primary: AppColors.primary,
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: AppColors.textPrimary,
+                  ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primary,
@@ -192,20 +200,25 @@ class _AddTaskDialogState
                     ),
                     alignment: Alignment.center,
                     borderRadius: BorderRadius.circular(12),
-                    dropdownColor: AppColors.surface,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
+                    dropdownColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : AppColors.surface,
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : AppColors.textPrimary,
                       fontSize: 16,
                     ),
                     elevation: 8,
                     menuMaxHeight: 250,
                     selectedItemBuilder: (BuildContext context) {
+                      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
                       return categories.map<Widget>((String category) {
                         return Center(
                           child: Text(
                             category,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : AppColors.textPrimary,
                               fontSize: 16,
                             ),
                           ),
@@ -235,7 +248,9 @@ class _AddTaskDialogState
                                   style: TextStyle(
                                     color: selectedCategory == category
                                         ? AppColors.primary
-                                        : AppColors.textPrimary,
+                                        : (Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.white
+                                            : AppColors.textPrimary),
                                     fontSize: 16,
                                     fontWeight: selectedCategory == category
                                         ? FontWeight.bold

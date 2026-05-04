@@ -94,14 +94,24 @@ class CalendarPage
                             lastDate: DateTime(2035),
                             initialEntryMode: DatePickerEntryMode.calendarOnly,
                             builder: (context, child) {
+                              final isDarkMode =
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark;
                               return Theme(
                                 data: Theme.of(context).copyWith(
-                                  colorScheme: const ColorScheme.light(
-                                    primary: AppColors.primary,
-                                    onPrimary: Colors.white,
-                                    surface: Colors.white,
-                                    onSurface: AppColors.textPrimary,
-                                  ),
+                                  colorScheme: isDarkMode
+                                      ? const ColorScheme.dark(
+                                          primary: AppColors.primary,
+                                          onPrimary: Colors.white,
+                                          surface: Color(0xFF1E1E1E),
+                                          onSurface: Colors.white,
+                                        )
+                                      : const ColorScheme.light(
+                                          primary: AppColors.primary,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.white,
+                                          onSurface: AppColors.textPrimary,
+                                        ),
                                 ),
                                 child: RepaintBoundary(child: child!),
                               );

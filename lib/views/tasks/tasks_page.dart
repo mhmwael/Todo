@@ -5,6 +5,7 @@ import '../../core/theme/app_strings.dart';
 import '../../controllers/task_controller.dart';
 import 'widgets/task_card.dart';
 import 'widgets/task_filter_chips.dart';
+import 'widgets/add_task_dialog.dart';
 
 class TasksPage
     extends
@@ -139,7 +140,15 @@ class TasksPage
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (
+                                context,
+                              ) => const AddTaskDialog(),
+                        );
+                      },
                       icon: const Icon(
                         Icons.add,
                       ),

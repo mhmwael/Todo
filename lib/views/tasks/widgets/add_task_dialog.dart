@@ -64,27 +64,35 @@ class _AddTaskDialogState
     super.dispose();
   }
 
-  Future<
-    void
-  >
-  _selectDate() async {
+  Future<void> _selectDate() async {
     final picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(
-        2024,
-      ),
-      lastDate: DateTime(
-        2027,
-      ),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2027),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: AppColors.textPrimary,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
-    if (picked !=
-        null) {
-      setState(
-        () {
-          selectedDate = picked;
-        },
-      );
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
     }
   }
 
@@ -188,15 +196,29 @@ class _AddTaskDialogState
                     ),
                     elevation: 8,
                     menuMaxHeight: 250,
+                    selectedItemBuilder: (BuildContext context) {
+                      return categories.map<Widget>((String category) {
+                        return Center(
+                          child: Text(
+                            category,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                            ),
+                          ),
+                        );
+                      }).toList();
+                    },
                     items: categories
                         .map(
                           (category) => DropdownMenuItem(
                             value: category,
                             child: Center(
                               child: Container(
+                                width: double.infinity,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 10.0,
-                                  horizontal: 4.0,
+                                  horizontal: 12.0,
                                 ),
                                 decoration: BoxDecoration(
                                   color: selectedCategory == category
@@ -206,6 +228,7 @@ class _AddTaskDialogState
                                 ),
                                 child: Text(
                                   category,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: selectedCategory == category
                                         ? AppColors.primary

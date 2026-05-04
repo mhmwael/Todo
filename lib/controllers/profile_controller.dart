@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task.dart';
 import '../models/user_stats.dart';
 
 class ProfileController extends ChangeNotifier {
+  static const String _imageKey = 'profile_image_path';
+  static const String _loginKey = 'is_logged_in';
+
   UserStats _stats = const UserStats(
     completedCount: 0,
     totalCount: 0,
@@ -11,37 +15,48 @@ class ProfileController extends ChangeNotifier {
   );
 
   String? _profileImagePath;
-  File? _profileImageFile;
   bool _isLoggedIn = false;
   String _userName = 'Guest User';
 
+  ProfileController() {
+    _loadProfile();
+  }
+
   UserStats get stats => _stats;
   String? get profileImagePath => _profileImagePath;
-  File? get profileImageFile => _profileImageFile;
   bool get isLoggedIn => _isLoggedIn;
   String get userName => _userName;
 
-  void setProfileImage(String path) {
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    _profileImagePath = prefs.getString(_imageKey);
+    _isLoggedIn = prefs.getBool(_loginKey) ?? false;
+    if (_isLoggedIn) {
+      _userName = 'Jules Engineer';
+    }
+    notifyListeners();
+  }
+
+  Future<void> setProfileImage(String path) async {
     _profileImagePath = path;
-    _profileImageFile = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_imageKey, path);
     notifyListeners();
   }
 
-  void setProfileImageFile(File file) {
-    _profileImageFile = file;
-    _profileImagePath = null;
-    notifyListeners();
-  }
-
-  void login() {
+  Future<void> login() async {
     _isLoggedIn = true;
     _userName = 'Jules Engineer';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_loginKey, true);
     notifyListeners();
   }
 
-  void logout() {
+  Future<void> logout() async {
     _isLoggedIn = false;
     _userName = 'Guest User';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_loginKey, false);
     notifyListeners();
   }
 

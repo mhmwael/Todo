@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../core/theme/app_colors.dart';
 import '../../controllers/profile_controller.dart';
 import '../../controllers/theme_controller.dart';
@@ -24,23 +25,31 @@ class ProfilePage extends StatelessWidget {
               const SizedBox(height: 32),
               // Circular Profile Pic
               GestureDetector(
-                onTap: () {
-                  // Simulate image picking
-                  profileController.setProfileImage('assets/images/logo.png');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile picture updated')),
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? image = await picker.pickImage(
+                    source: ImageSource.gallery,
                   );
+
+                  if (image != null) {
+                    profileController.setProfileImage(image.path);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Profile picture updated'),
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: CircleAvatar(
                   radius: 60,
                   backgroundColor: AppColors.primary.withOpacity(0.1),
-                  backgroundImage: profileController.profileImageFile != null
-                      ? FileImage(profileController.profileImageFile!) as ImageProvider
-                      : (profileController.profileImagePath != null
-                          ? AssetImage(profileController.profileImagePath!)
-                          : null),
-                  child: profileController.profileImageFile == null &&
-                          profileController.profileImagePath == null
+                  backgroundImage: profileController.profileImagePath != null
+                      ? FileImage(File(profileController.profileImagePath!))
+                          as ImageProvider
+                      : null,
+                  child: profileController.profileImagePath == null
                       ? Icon(Icons.person, size: 60, color: AppColors.primary)
                       : null,
                 ),
@@ -81,7 +90,9 @@ class ProfilePage extends StatelessWidget {
                           : AppColors.primary,
                     ),
                     child: Text(
-                      profileController.isLoggedIn ? 'Sign Out' : 'Sign In',
+                      profileController.isLoggedIn
+                          ? 'Sign Out'
+                          : 'Sign in / Login',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),

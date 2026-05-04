@@ -70,6 +70,7 @@ class _AddTaskDialogState
       initialDate: selectedDate,
       firstDate: DateTime(2024),
       lastDate: DateTime(2027),
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -85,7 +86,9 @@ class _AddTaskDialogState
               ),
             ),
           ),
-          child: child!,
+          child: RepaintBoundary(
+            child: child!,
+          ),
         );
       },
     );

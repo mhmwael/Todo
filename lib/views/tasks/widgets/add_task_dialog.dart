@@ -161,91 +161,73 @@ class _AddTaskDialogState
                   const SizedBox(
                     height: 8,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      border: Border.all(
-                        color: AppColors.divider,
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                      borderRadius: BorderRadius.circular(
-                        8,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: AppColors.divider),
+                      ),
+                      filled: true,
+                      fillColor: AppColors.surface,
                     ),
-                    child:
-                        DropdownButton<
-                          String
-                        >(
-                          value: selectedCategory,
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          dropdownColor: AppColors.surface,
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 16,
-                          ),
-                          elevation: 8,
-                          menuMaxHeight: 250,
-                          items: categories
-                              .map(
-                                (
+                    alignment: Alignment.center,
+                    borderRadius: BorderRadius.circular(12),
+                    dropdownColor: AppColors.surface,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                    ),
+                    elevation: 8,
+                    menuMaxHeight: 250,
+                    items: categories
+                        .map(
+                          (category) => DropdownMenuItem(
+                            value: category,
+                            child: Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0,
+                                  horizontal: 4.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: selectedCategory == category
+                                      ? AppColors.primary.withOpacity(0.1)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
                                   category,
-                                ) => DropdownMenuItem(
-                                  value: category,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0,
-                                      horizontal: 4.0,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          selectedCategory ==
-                                              category
-                                          ? AppColors.primary.withOpacity(
-                                              0.1,
-                                            )
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(
-                                        4,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      category,
-                                      style: TextStyle(
-                                        color:
-                                            selectedCategory ==
-                                                category
-                                            ? AppColors.primary
-                                            : AppColors.textPrimary,
-                                        fontSize: 16,
-                                        fontWeight:
-                                            selectedCategory ==
-                                                category
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
+                                  style: TextStyle(
+                                    color: selectedCategory == category
+                                        ? AppColors.primary
+                                        : AppColors.textPrimary,
+                                    fontSize: 16,
+                                    fontWeight: selectedCategory == category
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
                                 ),
-                              )
-                              .toList(),
-                          onChanged:
-                              (
-                                value,
-                              ) {
-                                if (value !=
-                                    null) {
-                                  setState(
-                                    () {
-                                      selectedCategory = value;
-                                    },
-                                  );
-                                }
-                              },
-                        ),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          selectedCategory = value;
+                        });
+                      }
+                    },
                   ),
                 ],
               ),

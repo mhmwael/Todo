@@ -69,7 +69,7 @@ class _AddTaskDialogState
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2024),
-      lastDate: DateTime(2027),
+      lastDate: DateTime(2035),
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       builder: (context, child) {
         return Theme(

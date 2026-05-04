@@ -85,11 +85,38 @@ class CalendarPage
                           Icons.chevron_left,
                         ),
                       ),
-                      Text(
-                        '${_getMonthName(selectedDate.month)} ${selectedDate.year}',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleLarge,
+                      GestureDetector(
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2024),
+                            lastDate: DateTime(2035),
+                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: AppColors.primary,
+                                    onPrimary: Colors.white,
+                                    surface: Colors.white,
+                                    onSurface: AppColors.textPrimary,
+                                  ),
+                                ),
+                                child: RepaintBoundary(child: child!),
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            calendarController.setSelectedDate(picked);
+                          }
+                        },
+                        child: Text(
+                          '${_getMonthName(selectedDate.month)} ${selectedDate.year}',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge,
+                        ),
                       ),
                       IconButton(
                         onPressed: () {

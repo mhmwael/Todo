@@ -374,7 +374,9 @@ class CalendarPage
                               ? AppColors.primary.withOpacity(
                                   0.1,
                                 )
-                              : AppColors.surface,
+                              : (Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF1E1E1E)
+                                  : AppColors.surface),
                           border: hasTask
                               ? Border.all(
                                   color: AppColors.primary,
@@ -391,7 +393,9 @@ class CalendarPage
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : AppColors.textPrimary,
+                                  : (Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white
+                                      : AppColors.textPrimary),
                               fontWeight: hasTask
                                   ? FontWeight.bold
                                   : FontWeight.normal,

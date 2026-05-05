@@ -196,7 +196,9 @@ class _AddTaskDialogState
                         borderSide: const BorderSide(color: AppColors.divider),
                       ),
                       filled: true,
-                      fillColor: AppColors.surface,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF1E1E1E)
+                          : AppColors.surface,
                     ),
                     alignment: Alignment.center,
                     borderRadius: BorderRadius.circular(12),

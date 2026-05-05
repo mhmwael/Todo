@@ -66,6 +66,43 @@ class _TasksPageState extends State<TasksPage> {
                   ),
                 ),
 
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: TextField(
+                    onChanged: (value) => taskController.setSearchQuery(value),
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : AppColors.textPrimary,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Search tasks...',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : AppColors.textSecondary,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : AppColors.textSecondary,
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF1E1E1E)
+                          : Colors.grey[200],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
                 TaskFilterChips(
                   onCategoryChanged: (category) {
                     taskController.setCategory(category);

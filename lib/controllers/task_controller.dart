@@ -7,12 +7,14 @@ class TaskController extends ChangeNotifier {
   final TaskDatabaseService _dbService = TaskDatabaseService();
   List<Task> _allTasks = [];
   String _selectedCategory = 'All';
+  String _searchQuery = '';
 
   TaskController() {
     _loadTasks();
   }
 
   String get selectedCategory => _selectedCategory;
+  String get searchQuery => _searchQuery;
   List<Task> get allTasks => _allTasks;
 
   Future<void> _loadTasks() async {
@@ -23,7 +25,16 @@ class TaskController extends ChangeNotifier {
   List<Task> get pendingTasks {
     List<Task> filtered = _allTasks.where((task) => !task.isCompleted).toList();
     if (_selectedCategory != 'All') {
-      filtered = filtered.where((task) => task.category == _selectedCategory).toList();
+      filtered =
+          filtered.where((task) => task.category == _selectedCategory).toList();
+    }
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered
+          .where((task) =>
+              task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              (task.description?.toLowerCase() ?? '')
+                  .contains(_searchQuery.toLowerCase()))
+          .toList();
     }
     return filtered;
   }
@@ -31,7 +42,16 @@ class TaskController extends ChangeNotifier {
   List<Task> get completedTasks {
     List<Task> filtered = _allTasks.where((task) => task.isCompleted).toList();
     if (_selectedCategory != 'All') {
-      filtered = filtered.where((task) => task.category == _selectedCategory).toList();
+      filtered =
+          filtered.where((task) => task.category == _selectedCategory).toList();
+    }
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered
+          .where((task) =>
+              task.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              (task.description?.toLowerCase() ?? '')
+                  .contains(_searchQuery.toLowerCase()))
+          .toList();
     }
     // Sort by due date or completion time if available, but for now just reverse to show latest first
     filtered.sort((a, b) => b.dueDate.compareTo(a.dueDate));
@@ -40,6 +60,11 @@ class TaskController extends ChangeNotifier {
 
   void setCategory(String category) {
     _selectedCategory = category;
+    notifyListeners();
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
     notifyListeners();
   }
 

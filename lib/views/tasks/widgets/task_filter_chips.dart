@@ -303,12 +303,19 @@ class _TaskFilterChipsState
                                             category,
                                           );
                                         },
-                                    backgroundColor: AppColors.surface,
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? const Color(0xFF1E1E1E)
+                                            : AppColors.surface,
                                     selectedColor: AppColors.primary,
                                     labelStyle: TextStyle(
                                       color: isSelected
                                           ? Colors.white
-                                          : AppColors.textPrimary,
+                                          : (Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : AppColors.textPrimary),
                                       fontWeight: isSelected
                                           ? FontWeight.bold
                                           : FontWeight.normal,
@@ -340,7 +347,9 @@ class _TaskFilterChipsState
                       ),
                       icon: Icon(
                         Icons.more_vert,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : AppColors.textPrimary,
                       ),
                       constraints: const BoxConstraints(
                         minWidth: 48,

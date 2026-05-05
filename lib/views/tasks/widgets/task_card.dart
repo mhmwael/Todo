@@ -79,7 +79,7 @@ class _TaskCardState
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         decoration: widget.task.isCompleted
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,

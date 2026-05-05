@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import './app_colors.dart';
 
 class AppTheme {
-  static ThemeData
-  get lightTheme {
+  static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
@@ -26,9 +25,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
         color: AppColors.surface,
       ),
@@ -39,9 +36,7 @@ class AppTheme {
           color: AppColors.textPrimary,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            20,
-          ),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(
             color: AppColors.divider,
           ),
@@ -56,9 +51,7 @@ class AppTheme {
             vertical: 12,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              8,
-            ),
+            borderRadius: BorderRadius.circular(8),
           ),
         ),
       ),
@@ -111,6 +104,19 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
         color: const Color(0xFF1E1E1E),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 12,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(

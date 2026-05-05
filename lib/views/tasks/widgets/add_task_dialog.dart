@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/task_controller.dart';
+import '../../../controllers/category_controller.dart';
 import '../../../models/task.dart';
 import '../../../models/task_priority.dart';
 import '../../../core/theme/app_colors.dart';
@@ -23,27 +24,12 @@ class AddTaskDialog
   createState() => _AddTaskDialogState();
 }
 
-class _AddTaskDialogState
-    extends
-        State<
-          AddTaskDialog
-        > {
-  late TextEditingController
-  titleController;
-  late TextEditingController
-  descriptionController;
-  late DateTime
-  selectedDate;
-  TaskPriority
-  selectedPriority = TaskPriority.medium;
-  String
-  selectedCategory = 'Work';
-
-  final categories = [
-    'Work',
-    'Personal',
-    'Shopping',
-  ];
+class _AddTaskDialogState extends State<AddTaskDialog> {
+  late TextEditingController titleController;
+  late TextEditingController descriptionController;
+  late DateTime selectedDate;
+  TaskPriority selectedPriority = TaskPriority.medium;
+  String? selectedCategory;
 
   @override
   void
@@ -108,10 +94,14 @@ class _AddTaskDialogState
   }
 
   @override
-  Widget
-  build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
+    final categoryController = context.watch<CategoryController>();
+    final categories = categoryController.categories.map((c) => c.name).toList();
+
+    if (selectedCategory == null && categories.isNotEmpty) {
+      selectedCategory = categories.contains('Work') ? 'Work' : categories.first;
+    }
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(
@@ -214,7 +204,8 @@ class _AddTaskDialogState
                     elevation: 8,
                     menuMaxHeight: 250,
                     selectedItemBuilder: (BuildContext context) {
-                      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+                      final isDarkMode =
+                          Theme.of(context).brightness == Brightness.dark;
                       return categories.map<Widget>((String category) {
                         return Center(
                           child: Text(
@@ -410,7 +401,7 @@ class _AddTaskDialogState
                             dueDate: selectedDate,
                             priority: selectedPriority,
                             isCompleted: false,
-                            category: selectedCategory,
+                            category: selectedCategory ?? 'Uncategorized',
                           );
 
                           context

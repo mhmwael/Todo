@@ -151,6 +151,11 @@ class _TaskFilterChipsState
                                             margin: const EdgeInsets.symmetric(
                                               vertical: 4.0,
                                             ),
+                                            color: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.dark
+                                                ? const Color(0xFF1E1E1E)
+                                                : AppColors.surface,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(
                                                 8.0,
@@ -160,9 +165,17 @@ class _TaskFilterChipsState
                                             child: ListTile(
                                               title: Text(
                                                 category.name,
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.titleMedium,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : AppColors
+                                                              .textPrimary,
+                                                    ),
                                               ),
                                               trailing: IconButton(
                                                 onPressed: () {
@@ -201,7 +214,7 @@ class _TaskFilterChipsState
                                                   ),
                                                 ),
                                               ),
-                                              tileColor: AppColors.surface,
+                                              tileColor: Colors.transparent,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(
                                                   8.0,

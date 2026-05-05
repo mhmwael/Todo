@@ -268,7 +268,8 @@ class CalendarPage
     );
     final daysInMonth = lastDayOfMonth.day;
     final firstWeekday = firstDayOfMonth.weekday;
-    final taskList = allTasks; // Explicitly capture the type
+    // Only show markers for incomplete tasks
+    final taskList = allTasks.where((task) => !task.isCompleted).toList();
 
     return Column(
       children: [

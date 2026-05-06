@@ -51,7 +51,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   }
 
   Future<void> _selectDate() async {
-    final picked = await showDatePicker(
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2024),
@@ -86,9 +86,33 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         );
       },
     );
-    if (picked != null) {
+    if (pickedDate != null) {
       setState(() {
-        selectedDate = picked;
+        selectedDate = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          selectedDate.hour,
+          selectedDate.minute,
+        );
+      });
+    }
+  }
+
+  Future<void> _selectTime() async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedDate),
+    );
+    if (pickedTime != null) {
+      setState(() {
+        selectedDate = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
       });
     }
   }
@@ -174,9 +198,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     value: selectedCategory,
                     isExpanded: true,
                     decoration: InputDecoration(
+                      isDense: true,
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(left: 12),
+                        child: Icon(Icons.category, size: 20, color: Colors.transparent),
+                      ),
+                      prefixIconConstraints: const BoxConstraints(minWidth: 44),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
+                        vertical: 12,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -201,7 +230,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           : AppColors.textPrimary,
                       fontSize: 16,
                     ),
-                    elevation: 8,
+                    elevation: 12,
                     menuMaxHeight: 250,
                     selectedItemBuilder: (BuildContext context) {
                       final isDarkMode =
@@ -210,6 +239,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         return Center(
                           child: Text(
                             category,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: isDarkMode ? Colors.white : AppColors.textPrimary,
                               fontSize: 16,
@@ -233,7 +263,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                                   color: selectedCategory == category
                                       ? AppColors.primary.withOpacity(0.1)
                                       : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   category,
@@ -345,21 +375,34 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               const SizedBox(
                 height: 16,
               ),
-              // Due Date
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Due Date & Time
+              Column(
                 children: [
-                  Text(
-                    'Due Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      ElevatedButton(
+                        onPressed: _selectDate,
+                        child: const Text('Date'),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: _selectDate,
-                    child: const Text(
-                      'Date',
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Time: ${TimeOfDay.fromDateTime(selectedDate).format(context)}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      ElevatedButton(
+                        onPressed: _selectTime,
+                        child: const Text('Time'),
+                      ),
+                    ],
                   ),
                 ],
               ),

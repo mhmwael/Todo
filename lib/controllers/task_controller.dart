@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import '../models/task.dart';
 import '../models/task_priority.dart';
 import '../core/database/task_database_service.dart';
+import '../core/services/notification_service.dart';
 
 class TaskController extends ChangeNotifier {
+  final NotificationService _notificationService = NotificationService();
   final TaskDatabaseService _dbService = TaskDatabaseService();
   List<Task> _allTasks = [];
   String _selectedCategory = 'All';
@@ -113,6 +115,9 @@ class TaskController extends ChangeNotifier {
 
       if (isCompleted) {
         await _enforceCompletedTasksLimit();
+        _notificationService.cancelNotification(int.parse(taskId.substring(taskId.length - 9)));
+      } else {
+        _scheduleTaskNotification(updatedTask);
       }
 
       notifyListeners();
@@ -133,12 +138,14 @@ class TaskController extends ChangeNotifier {
   Future<void> deleteTask(String taskId) async {
     _allTasks.removeWhere((task) => task.id == taskId);
     await _dbService.deleteTask(taskId);
+    _notificationService.cancelNotification(int.parse(taskId.substring(taskId.length - 9)));
     notifyListeners();
   }
 
   Future<void> addTask(Task task) async {
     _allTasks.add(task);
     await _dbService.addTask(task);
+    _scheduleTaskNotification(task);
     notifyListeners();
   }
 
@@ -147,7 +154,19 @@ class TaskController extends ChangeNotifier {
     if (taskIndex != -1) {
       _allTasks[taskIndex] = updatedTask;
       await _dbService.updateTask(updatedTask);
+      _scheduleTaskNotification(updatedTask);
       notifyListeners();
+    }
+  }
+
+  void _scheduleTaskNotification(Task task) {
+    if (!task.isCompleted && task.dueDate.isAfter(DateTime.now())) {
+      _notificationService.scheduleNotification(
+        id: int.parse(task.id.substring(task.id.length - 9)),
+        title: 'Task Reminder',
+        body: task.title,
+        scheduledTime: task.dueDate,
+      );
     }
   }
 }

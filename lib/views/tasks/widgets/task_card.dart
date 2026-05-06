@@ -58,7 +58,7 @@ class _TaskCardState
           12.0,
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Checkbox(
               value: widget.task.isCompleted,

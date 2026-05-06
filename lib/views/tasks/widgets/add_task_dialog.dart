@@ -11,12 +11,12 @@ class AddTaskDialog
         StatefulWidget {
   final DateTime?
   initialDate;
-  final Task? taskToEdit;
+  final Task? task;
 
   const AddTaskDialog({
     super.key,
     this.initialDate,
-    this.taskToEdit,
+    this.task,
   });
 
   @override
@@ -28,6 +28,7 @@ class AddTaskDialog
 
 class _AddTaskDialogState extends State<AddTaskDialog> {
   late TextEditingController titleController;
+  late TextEditingController descriptionController;
   late DateTime selectedDate;
   TaskPriority selectedPriority = TaskPriority.medium;
   String? selectedCategory;
@@ -36,23 +37,20 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   void
   initState() {
     super.initState();
-    titleController = TextEditingController();
-    selectedDate =
+    titleController = TextEditingController(text: widget.task?.title);
+    descriptionController = TextEditingController(text: widget.task?.description);
+    selectedDate = widget.task?.dueDate ??
         widget.initialDate ??
         DateTime.now();
-    
-    if (widget.taskToEdit != null) {
-      titleController.text = widget.taskToEdit!.title;
-      selectedDate = widget.taskToEdit!.dueDate;
-      selectedPriority = widget.taskToEdit!.priority;
-      selectedCategory = widget.taskToEdit!.category;
-    }
+    selectedPriority = widget.task?.priority ?? TaskPriority.medium;
+    selectedCategory = widget.task?.category;
   }
 
   @override
   void
   dispose() {
     titleController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
@@ -148,7 +146,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.taskToEdit != null ? 'Edit Task' : 'Add New Task',
+                widget.task == null ? 'Add New Task' : 'Edit Task',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge,
@@ -167,6 +165,22 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              // Description
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  hintText: 'Task description (optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      8,
+                    ),
+                  ),
+                ),
+                maxLines: 3,
               ),
               const SizedBox(
                 height: 16,
@@ -425,81 +439,50 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (titleController.text.isNotEmpty) {
-                          if (widget.taskToEdit != null) {
-                            // Update existing task
-                            final updatedTask = widget.taskToEdit!.copyWith(
-                              title: titleController.text,
-                              dueDate: selectedDate,
-                              priority: selectedPriority,
-                              category: selectedCategory ?? 'Uncategorized',
-                            );
-
-                            context
-                                .read<
-                                  TaskController
-                                >()
-                                .updateTask(
-                                  widget.taskToEdit!.id,
-                                  updatedTask,
-                                );
-
-                            Navigator.pop(
-                              context,
-                            );
-
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Task updated successfully!',
-                                ),
-                                duration: Duration(
-                                  seconds: 2,
-                                ),
-                              ),
-                            );
-                          } else {
-                            // Create new task
+                          if (widget.task == null) {
                             final newTask = Task(
                               id: DateTime.now().millisecondsSinceEpoch.toString(),
                               title: titleController.text,
-                              description: null,
+                              description: descriptionController.text.isEmpty
+                                  ? null
+                                  : descriptionController.text,
                               dueDate: selectedDate,
                               priority: selectedPriority,
                               isCompleted: false,
                               category: selectedCategory ?? 'Uncategorized',
                             );
 
-                            context
-                                .read<
-                                  TaskController
-                                >()
-                                .addTask(
-                                  newTask,
-                                );
-
-                            Navigator.pop(
-                              context,
+                            context.read<TaskController>().addTask(newTask);
+                          } else {
+                            final updatedTask = widget.task!.copyWith(
+                              title: titleController.text,
+                              description: descriptionController.text.isEmpty
+                                  ? null
+                                  : descriptionController.text,
+                              dueDate: selectedDate,
+                              priority: selectedPriority,
+                              category: selectedCategory ?? 'Uncategorized',
                             );
 
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Task added successfully!',
-                                ),
-                                duration: Duration(
-                                  seconds: 2,
-                                ),
-                              ),
-                            );
+                            context.read<TaskController>().updateTask(updatedTask.id, updatedTask);
                           }
+
+                          Navigator.pop(context);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                widget.task == null
+                                    ? 'Task added successfully!'
+                                    : 'Task updated successfully!',
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
                         }
                       },
                       child: Text(
-                        widget.taskToEdit != null ? 'Edit Task' : 'Add Task',
+                        widget.task == null ? 'Add Task' : 'Edit',
                       ),
                     ),
                   ),

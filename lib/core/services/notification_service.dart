@@ -1,54 +1,78 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
-import 'dart:io' show Platform;
+import 'dart:io'
+    show
+        Platform;
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
+  static final NotificationService
+  _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin
+  _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  Future<void> init() async {
+  Future<
+    void
+  >
+  init() async {
     tz.initializeTimeZones();
 
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
 
-    const DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings();
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
 
-    await _notificationsPlugin.initialize(initSettings);
+    await _notificationsPlugin.initialize(
+      initSettings,
+    );
 
+    // Request notification permissions for Android 13+
     if (Platform.isAndroid) {
-      _notificationsPlugin
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
+      await androidImplementation?.requestNotificationsPermission();
     }
   }
 
-  Future<void> scheduleNotification({
+  Future<
+    void
+  >
+  scheduleNotification({
     required int id,
     required String title,
     required String body,
     required DateTime scheduledTime,
   }) async {
     // If the time is in the past, don't schedule
-    if (scheduledTime.isBefore(DateTime.now())) return;
+    if (scheduledTime.isBefore(
+      DateTime.now(),
+    ))
+      return;
 
     await _notificationsPlugin.zonedSchedule(
       id,
       title,
       body,
-      tz.TZDateTime.from(scheduledTime, tz.local),
+      tz.TZDateTime.from(
+        scheduledTime,
+        tz.local,
+      ),
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'task_reminders',
@@ -60,12 +84,18 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
-  Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id);
+  Future<
+    void
+  >
+  cancelNotification(
+    int id,
+  ) async {
+    await _notificationsPlugin.cancel(
+      id,
+    );
   }
 }

@@ -9,6 +9,7 @@ class TaskCard extends StatefulWidget {
   final ValueChanged<bool> onToggleComplete;
   final VoidCallback? onPin;
   final VoidCallback? onFocus;
+  final VoidCallback? onEdit;
   final bool isFocused;
 
   const TaskCard({
@@ -18,6 +19,7 @@ class TaskCard extends StatefulWidget {
     required this.onToggleComplete,
     this.onPin,
     this.onFocus,
+    this.onEdit,
     this.isFocused = false,
   });
 
@@ -33,13 +35,15 @@ class _TaskCardState extends State<TaskCard> {
         horizontal: 16,
         vertical: 8,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(
-          12.0,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: GestureDetector(
+        onTap: widget.onEdit,
+        child: Padding(
+          padding: const EdgeInsets.all(
+            12.0,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Checkbox(
               value: widget.task.isCompleted,
               onChanged: (bool? value) {
@@ -174,6 +178,7 @@ class _TaskCardState extends State<TaskCard> {
               iconSize: 20,
             ),
           ],
+        ),
         ),
       ),
     );

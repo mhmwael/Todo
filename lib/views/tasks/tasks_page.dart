@@ -4,8 +4,10 @@ import 'package:confetti/confetti.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_strings.dart';
 import '../../controllers/task_controller.dart';
+import '../../models/task_frequency.dart';
 import 'widgets/task_card.dart';
 import 'widgets/task_filter_chips.dart';
+import 'widgets/task_frequency_filter.dart';
 import 'widgets/add_task_dialog.dart';
 
 class TasksPage extends StatefulWidget {
@@ -106,6 +108,14 @@ class _TasksPageState extends State<TasksPage> {
                 TaskFilterChips(
                   onCategoryChanged: (category) {
                     taskController.setCategory(category);
+                  },
+                ),
+
+                const SizedBox(height: 8),
+
+                TaskFrequencyFilter(
+                  onFrequencyChanged: (frequency) {
+                    taskController.setFrequency(frequency);
                   },
                 ),
 

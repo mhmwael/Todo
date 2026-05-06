@@ -152,6 +152,11 @@ class _TasksPageState extends State<TasksPage> {
                                   _confettiController.play();
                                 }
                               },
+                              onPin: () => taskController.toggleTaskPin(task.id),
+                              onFocus: () =>
+                                  taskController.toggleTaskFocus(task.id),
+                              isFocused:
+                                  taskController.focusedTaskId == task.id,
                             )),
                         if (completedTasks.isNotEmpty) ...[
                           const Padding(

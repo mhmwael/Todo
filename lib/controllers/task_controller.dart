@@ -8,6 +8,7 @@ class TaskController extends ChangeNotifier {
   List<Task> _allTasks = [];
   String _selectedCategory = 'All';
   String _searchQuery = '';
+  String? _focusedTaskId;
 
   TaskController() {
     _loadTasks();
@@ -15,6 +16,7 @@ class TaskController extends ChangeNotifier {
 
   String get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
+  String? get focusedTaskId => _focusedTaskId;
   List<Task> get allTasks => _allTasks;
 
   Future<void> _loadTasks() async {
@@ -23,6 +25,10 @@ class TaskController extends ChangeNotifier {
   }
 
   List<Task> get pendingTasks {
+    if (_focusedTaskId != null) {
+      return _allTasks.where((task) => task.id == _focusedTaskId).toList();
+    }
+
     List<Task> filtered = _allTasks.where((task) => !task.isCompleted).toList();
     if (_selectedCategory != 'All') {
       filtered =
@@ -36,10 +42,20 @@ class TaskController extends ChangeNotifier {
                   .contains(_searchQuery.toLowerCase()))
           .toList();
     }
+
+    // Sort: pinned first, then by date
+    filtered.sort((a, b) {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return a.dueDate.compareTo(b.dueDate);
+    });
+
     return filtered;
   }
 
   List<Task> get completedTasks {
+    if (_focusedTaskId != null) return [];
+
     List<Task> filtered = _allTasks.where((task) => task.isCompleted).toList();
     if (_selectedCategory != 'All') {
       filtered =
@@ -65,6 +81,26 @@ class TaskController extends ChangeNotifier {
 
   void setSearchQuery(String query) {
     _searchQuery = query;
+    notifyListeners();
+  }
+
+  void toggleTaskPin(String taskId) async {
+    final taskIndex = _allTasks.indexWhere((task) => task.id == taskId);
+    if (taskIndex != -1) {
+      final updatedTask =
+          _allTasks[taskIndex].copyWith(isPinned: !_allTasks[taskIndex].isPinned);
+      _allTasks[taskIndex] = updatedTask;
+      await _dbService.updateTask(updatedTask);
+      notifyListeners();
+    }
+  }
+
+  void toggleTaskFocus(String taskId) {
+    if (_focusedTaskId == taskId) {
+      _focusedTaskId = null;
+    } else {
+      _focusedTaskId = taskId;
+    }
     notifyListeners();
   }
 

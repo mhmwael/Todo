@@ -4,7 +4,7 @@ import '../../models/task.dart';
 import '../../models/task_priority.dart';
 
 class TaskDatabaseService {
-  static const _databaseName = 'tasks_v2.db';
+  static const _databaseName = 'tasks_v3.db';
   static const _databaseVersion = 1;
   static const _tasksTable = 'tasks';
 
@@ -33,7 +33,8 @@ class TaskDatabaseService {
             dueDate TEXT NOT NULL,
             priority TEXT NOT NULL,
             isCompleted INTEGER NOT NULL,
-            category TEXT NOT NULL
+            category TEXT NOT NULL,
+            isPinned INTEGER NOT NULL DEFAULT 0
           )
         ''');
       },
@@ -54,6 +55,7 @@ class TaskDatabaseService {
         ),
         isCompleted: (map['isCompleted'] as int) == 1,
         category: map['category'] as String,
+        isPinned: (map['isPinned'] as int? ?? 0) == 1,
       );
     }).toList();
   }
@@ -70,6 +72,7 @@ class TaskDatabaseService {
         'priority': task.priority.toString().split('.').last,
         'isCompleted': task.isCompleted ? 1 : 0,
         'category': task.category,
+        'isPinned': task.isPinned ? 1 : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -86,6 +89,7 @@ class TaskDatabaseService {
         'priority': task.priority.toString().split('.').last,
         'isCompleted': task.isCompleted ? 1 : 0,
         'category': task.category,
+        'isPinned': task.isPinned ? 1 : 0,
       },
       where: 'id = ?',
       whereArgs: [task.id],

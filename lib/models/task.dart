@@ -8,6 +8,7 @@ class Task {
   final TaskPriority priority;
   final bool isCompleted;
   final String category;
+  final bool isPinned;
 
   Task({
     required this.id,
@@ -17,6 +18,7 @@ class Task {
     required this.priority,
     required this.isCompleted,
     required this.category,
+    this.isPinned = false,
   });
 
   Task copyWith({
@@ -27,6 +29,7 @@ class Task {
     TaskPriority? priority,
     bool? isCompleted,
     String? category,
+    bool? isPinned,
   }) {
     return Task(
       id: id ?? this.id,
@@ -36,6 +39,7 @@ class Task {
       priority: priority ?? this.priority,
       isCompleted: isCompleted ?? this.isCompleted,
       category: category ?? this.category,
+      isPinned: isPinned ?? this.isPinned,
     );
   }
 }

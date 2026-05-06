@@ -11,7 +11,8 @@ class AddTaskDialog
         StatefulWidget {
   final DateTime?
   initialDate;
-  final Task? task;
+  final Task?
+  task;
 
   const AddTaskDialog({
     super.key,
@@ -26,23 +27,34 @@ class AddTaskDialog
   createState() => _AddTaskDialogState();
 }
 
-class _AddTaskDialogState extends State<AddTaskDialog> {
-  late TextEditingController titleController;
-  late TextEditingController descriptionController;
-  late DateTime selectedDate;
-  TaskPriority selectedPriority = TaskPriority.medium;
-  String? selectedCategory;
+class _AddTaskDialogState
+    extends
+        State<
+          AddTaskDialog
+        > {
+  late TextEditingController
+  titleController;
+  late DateTime
+  selectedDate;
+  TaskPriority
+  selectedPriority = TaskPriority.medium;
+  String?
+  selectedCategory;
 
   @override
   void
   initState() {
     super.initState();
-    titleController = TextEditingController(text: widget.task?.title);
-    descriptionController = TextEditingController(text: widget.task?.description);
-    selectedDate = widget.task?.dueDate ??
+    titleController = TextEditingController(
+      text: widget.task?.title,
+    );
+    selectedDate =
+        widget.task?.dueDate ??
         widget.initialDate ??
         DateTime.now();
-    selectedPriority = widget.task?.priority ?? TaskPriority.medium;
+    selectedPriority =
+        widget.task?.priority ??
+        TaskPriority.medium;
     selectedCategory = widget.task?.category;
   }
 
@@ -50,84 +62,133 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   void
   dispose() {
     titleController.dispose();
-    descriptionController.dispose();
     super.dispose();
   }
 
-  Future<void> _selectDate() async {
+  Future<
+    void
+  >
+  _selectDate() async {
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2035),
+      firstDate: DateTime(
+        2024,
+      ),
+      lastDate: DateTime(
+        2035,
+      ),
       initialEntryMode: DatePickerEntryMode.calendarOnly,
-      builder: (context, child) {
-        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: isDarkMode
-                ? ColorScheme.dark(
-                    primary: AppColors.primary,
-                    onPrimary: Colors.white,
-                    surface: const Color(0xFF1E1E1E),
-                    onSurface: Colors.white,
-                  )
-                : ColorScheme.light(
-                    primary: AppColors.primary,
-                    onPrimary: Colors.white,
-                    surface: Colors.white,
-                    onSurface: AppColors.textPrimary,
+      builder:
+          (
+            context,
+            child,
+          ) {
+            final isDarkMode =
+                Theme.of(
+                  context,
+                ).brightness ==
+                Brightness.dark;
+            return Theme(
+              data:
+                  Theme.of(
+                    context,
+                  ).copyWith(
+                    colorScheme: isDarkMode
+                        ? ColorScheme.dark(
+                            primary: AppColors.primary,
+                            onPrimary: Colors.white,
+                            surface: const Color(
+                              0xFF1E1E1E,
+                            ),
+                            onSurface: Colors.white,
+                          )
+                        : ColorScheme.light(
+                            primary: AppColors.primary,
+                            onPrimary: Colors.white,
+                            surface: Colors.white,
+                            onSurface: AppColors.textPrimary,
+                          ),
+                    textButtonTheme: TextButtonThemeData(
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                      ),
+                    ),
                   ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primary,
+              child: RepaintBoundary(
+                child: child!,
               ),
-            ),
-          ),
-          child: RepaintBoundary(
-            child: child!,
-          ),
-        );
-      },
+            );
+          },
     );
-    if (pickedDate != null) {
-      setState(() {
-        selectedDate = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          selectedDate.hour,
-          selectedDate.minute,
-        );
-      });
+    if (pickedDate !=
+        null) {
+      setState(
+        () {
+          selectedDate = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            selectedDate.hour,
+            selectedDate.minute,
+          );
+        },
+      );
     }
   }
 
-  Future<void> _selectTime() async {
+  Future<
+    void
+  >
+  _selectTime() async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(selectedDate),
+      initialTime: TimeOfDay.fromDateTime(
+        selectedDate,
+      ),
     );
-    if (pickedTime != null) {
-      setState(() {
-        selectedDate = DateTime(
-          selectedDate.year,
-          selectedDate.month,
-          selectedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-      });
+    if (pickedTime !=
+        null) {
+      setState(
+        () {
+          selectedDate = DateTime(
+            selectedDate.year,
+            selectedDate.month,
+            selectedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        },
+      );
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final categoryController = context.watch<CategoryController>();
-    final categories = categoryController.categories.map((c) => c.name).toList();
+  Widget
+  build(
+    BuildContext context,
+  ) {
+    final categoryController = context
+        .watch<
+          CategoryController
+        >();
+    final categories = categoryController.categories
+        .map(
+          (
+            c,
+          ) => c.name,
+        )
+        .toList();
 
-    if (selectedCategory == null && categories.isNotEmpty) {
-      selectedCategory = categories.contains('Work') ? 'Work' : categories.first;
+    if (selectedCategory ==
+            null &&
+        categories.isNotEmpty) {
+      selectedCategory =
+          categories.contains(
+            'Work',
+          )
+          ? 'Work'
+          : categories.first;
     }
 
     return Dialog(
@@ -146,7 +207,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.task == null ? 'Add New Task' : 'Edit Task',
+                widget.task ==
+                        null
+                    ? 'Add New Task'
+                    : 'Edit Task',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge,
@@ -169,22 +233,6 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               const SizedBox(
                 height: 16,
               ),
-              // Description
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  hintText: 'Task description (optional)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      8,
-                    ),
-                  ),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
               // Category
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,63 +246,113 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   const SizedBox(
                     height: 8,
                   ),
-                  DropdownButtonFormField<String>(
-                    value: selectedCategory,
+                  DropdownButtonFormField<
+                    String
+                  >(
+                    initialValue: selectedCategory,
                     isExpanded: true,
                     decoration: InputDecoration(
                       isDense: true,
                       prefixIcon: const Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Icon(Icons.category, size: 20, color: Colors.transparent),
+                        padding: EdgeInsets.only(
+                          left: 12,
+                        ),
+                        child: Icon(
+                          Icons.category,
+                          size: 20,
+                          color: Colors.transparent,
+                        ),
                       ),
-                      prefixIconConstraints: const BoxConstraints(minWidth: 44),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 44,
+                      ),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 12,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(
+                          8,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: AppColors.divider),
+                        borderRadius: BorderRadius.circular(
+                          8,
+                        ),
+                        borderSide: const BorderSide(
+                          color: AppColors.divider,
+                        ),
                       ),
                       filled: true,
-                      fillColor: Theme.of(context).brightness == Brightness.dark
-                          ? const Color(0xFF1E1E1E)
+                      fillColor:
+                          Theme.of(
+                                context,
+                              ).brightness ==
+                              Brightness.dark
+                          ? const Color(
+                              0xFF1E1E1E,
+                            )
                           : AppColors.surface,
                     ),
                     alignment: Alignment.center,
-                    borderRadius: BorderRadius.circular(12),
-                    dropdownColor: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E1E)
+                    borderRadius: BorderRadius.circular(
+                      12,
+                    ),
+                    dropdownColor:
+                        Theme.of(
+                              context,
+                            ).brightness ==
+                            Brightness.dark
+                        ? const Color(
+                            0xFF1E1E1E,
+                          )
                         : AppColors.surface,
                     style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
+                      color:
+                          Theme.of(
+                                context,
+                              ).brightness ==
+                              Brightness.dark
                           ? Colors.white
                           : AppColors.textPrimary,
                       fontSize: 16,
                     ),
                     elevation: 12,
                     menuMaxHeight: 250,
-                    selectedItemBuilder: (BuildContext context) {
-                      final isDarkMode =
-                          Theme.of(context).brightness == Brightness.dark;
-                      return categories.map<Widget>((String category) {
-                        return Center(
-                          child: Text(
-                            category,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                              fontSize: 16,
-                            ),
-                          ),
-                        );
-                      }).toList();
-                    },
+                    selectedItemBuilder:
+                        (
+                          BuildContext context,
+                        ) {
+                          final isDarkMode =
+                              Theme.of(
+                                context,
+                              ).brightness ==
+                              Brightness.dark;
+                          return categories.map<
+                            Widget
+                          >(
+                            (
+                              String category,
+                            ) {
+                              return Center(
+                                child: Text(
+                                  category,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : AppColors.textPrimary,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              );
+                            },
+                          ).toList();
+                        },
                     items: categories
                         .map(
-                          (category) => DropdownMenuItem(
+                          (
+                            category,
+                          ) => DropdownMenuItem(
                             value: category,
                             child: Center(
                               child: Container(
@@ -264,22 +362,35 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                                   horizontal: 12.0,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: selectedCategory == category
-                                      ? AppColors.primary.withOpacity(0.1)
+                                  color:
+                                      selectedCategory ==
+                                          category
+                                      ? AppColors.primary.withOpacity(
+                                          0.1,
+                                        )
                                       : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(
+                                    8,
+                                  ),
                                 ),
                                 child: Text(
                                   category,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: selectedCategory == category
+                                    color:
+                                        selectedCategory ==
+                                            category
                                         ? AppColors.primary
-                                        : (Theme.of(context).brightness == Brightness.dark
-                                            ? Colors.white
-                                            : AppColors.textPrimary),
+                                        : (Theme.of(
+                                                    context,
+                                                  ).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : AppColors.textPrimary),
                                     fontSize: 16,
-                                    fontWeight: selectedCategory == category
+                                    fontWeight:
+                                        selectedCategory ==
+                                            category
                                         ? FontWeight.bold
                                         : FontWeight.normal,
                                   ),
@@ -289,13 +400,19 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           ),
                         )
                         .toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      }
-                    },
+                    onChanged:
+                        (
+                          value,
+                        ) {
+                          if (value !=
+                              null) {
+                            setState(
+                              () {
+                                selectedCategory = value;
+                              },
+                            );
+                          }
+                        },
                   ),
                 ],
               ),
@@ -387,11 +504,15 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     children: [
                       Text(
                         'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium,
                       ),
                       ElevatedButton(
                         onPressed: _selectDate,
-                        child: const Text('Date'),
+                        child: const Text(
+                          'Date',
+                        ),
                       ),
                     ],
                   ),
@@ -400,11 +521,15 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     children: [
                       Text(
                         'Time: ${TimeOfDay.fromDateTime(selectedDate).format(context)}',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium,
                       ),
                       ElevatedButton(
                         onPressed: _selectTime,
-                        child: const Text('Time'),
+                        child: const Text(
+                          'Time',
+                        ),
                       ),
                     ],
                   ),
@@ -439,50 +564,72 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (titleController.text.isNotEmpty) {
-                          if (widget.task == null) {
+                          if (widget.task ==
+                              null) {
                             final newTask = Task(
                               id: DateTime.now().millisecondsSinceEpoch.toString(),
                               title: titleController.text,
-                              description: descriptionController.text.isEmpty
-                                  ? null
-                                  : descriptionController.text,
                               dueDate: selectedDate,
                               priority: selectedPriority,
                               isCompleted: false,
-                              category: selectedCategory ?? 'Uncategorized',
+                              category:
+                                  selectedCategory ??
+                                  'Uncategorized',
                             );
 
-                            context.read<TaskController>().addTask(newTask);
+                            context
+                                .read<
+                                  TaskController
+                                >()
+                                .addTask(
+                                  newTask,
+                                );
                           } else {
                             final updatedTask = widget.task!.copyWith(
                               title: titleController.text,
-                              description: descriptionController.text.isEmpty
-                                  ? null
-                                  : descriptionController.text,
                               dueDate: selectedDate,
                               priority: selectedPriority,
-                              category: selectedCategory ?? 'Uncategorized',
+                              category:
+                                  selectedCategory ??
+                                  'Uncategorized',
                             );
 
-                            context.read<TaskController>().updateTask(updatedTask.id, updatedTask);
+                            context
+                                .read<
+                                  TaskController
+                                >()
+                                .updateTask(
+                                  updatedTask.id,
+                                  updatedTask,
+                                );
                           }
 
-                          Navigator.pop(context);
+                          Navigator.pop(
+                            context,
+                          );
 
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(
                             SnackBar(
                               content: Text(
-                                widget.task == null
+                                widget.task ==
+                                        null
                                     ? 'Task added successfully!'
                                     : 'Task updated successfully!',
                               ),
-                              duration: const Duration(seconds: 2),
+                              duration: const Duration(
+                                seconds: 2,
+                              ),
                             ),
                           );
                         }
                       },
                       child: Text(
-                        widget.task == null ? 'Add Task' : 'Edit',
+                        widget.task ==
+                                null
+                            ? 'Add Task'
+                            : 'Edit',
                       ),
                     ),
                   ),

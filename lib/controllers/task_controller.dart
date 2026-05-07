@@ -20,6 +20,8 @@ class TaskController
   _searchQuery = '';
   String?
   _focusedTaskId;
+  String
+  _selectedTimePeriod = 'All';
 
   TaskController() {
     _loadTasks();
@@ -31,10 +33,80 @@ class TaskController
   get searchQuery => _searchQuery;
   String?
   get focusedTaskId => _focusedTaskId;
+  String
+  get selectedTimePeriod => _selectedTimePeriod;
   List<
     Task
   >
   get allTasks => _allTasks;
+
+  bool
+  _isTaskInTimePeriod(
+    Task task,
+    String timePeriod,
+  ) {
+    final now = DateTime.now();
+    final today = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    );
+    final taskDate = DateTime(
+      task.dueDate.year,
+      task.dueDate.month,
+      task.dueDate.day,
+    );
+
+    switch (timePeriod) {
+      case 'Daily':
+        return taskDate.year ==
+                today.year &&
+            taskDate.month ==
+                today.month &&
+            taskDate.day ==
+                today.day;
+      case 'Weekly':
+        final weekStart = today.subtract(
+          Duration(
+            days:
+                today.weekday -
+                1,
+          ),
+        );
+        final weekEnd = weekStart.add(
+          const Duration(
+            days: 6,
+          ),
+        );
+        return (taskDate.isAfter(
+                  weekStart.subtract(
+                    const Duration(
+                      days: 1,
+                    ),
+                  ),
+                ) ||
+                taskDate.isAtSameMomentAs(
+                  weekStart,
+                )) &&
+            (taskDate.isBefore(
+                  weekEnd.add(
+                    const Duration(
+                      days: 1,
+                    ),
+                  ),
+                ) ||
+                taskDate.isAtSameMomentAs(
+                  weekEnd,
+                ));
+      case 'Monthly':
+        return task.dueDate.year ==
+                now.year &&
+            task.dueDate.month ==
+                now.month;
+      default:
+        return true;
+    }
+  }
 
   Future<
     void
@@ -80,6 +152,19 @@ class TaskController
             ) =>
                 task.category ==
                 _selectedCategory,
+          )
+          .toList();
+    }
+    if (_selectedTimePeriod !=
+        'All') {
+      filtered = filtered
+          .where(
+            (
+              task,
+            ) => _isTaskInTimePeriod(
+              task,
+              _selectedTimePeriod,
+            ),
           )
           .toList();
     }
@@ -152,6 +237,19 @@ class TaskController
           )
           .toList();
     }
+    if (_selectedTimePeriod !=
+        'All') {
+      filtered = filtered
+          .where(
+            (
+              task,
+            ) => _isTaskInTimePeriod(
+              task,
+              _selectedTimePeriod,
+            ),
+          )
+          .toList();
+    }
     if (_searchQuery.isNotEmpty) {
       filtered = filtered
           .where(
@@ -190,6 +288,14 @@ class TaskController
     String category,
   ) {
     _selectedCategory = category;
+    notifyListeners();
+  }
+
+  void
+  setTimePeriod(
+    String timePeriod,
+  ) {
+    _selectedTimePeriod = timePeriod;
     notifyListeners();
   }
 

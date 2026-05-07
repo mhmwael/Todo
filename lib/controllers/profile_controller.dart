@@ -2,15 +2,21 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task.dart';
 import '../models/user_stats.dart';
+import '../core/services/firebase_auth_service.dart';
 
+// Controller managing user profile state and Firebase authentication
 class ProfileController
     extends
         ChangeNotifier {
+  // Key for storing profile image in local storage
   static const String
   _imageKey = 'profile_image_path';
-  static const String
-  _loginKey = 'is_logged_in';
 
+  // Firebase authentication service instance
+  final FirebaseAuthService
+  _authService = FirebaseAuthService();
+
+  // User statistics (completed tasks, total tasks, streak)
   UserStats
   _stats = const UserStats(
     completedCount: 0,
@@ -18,26 +24,45 @@ class ProfileController
     streak: 0,
   );
 
+  // Local path to user's profile image
   String?
   _profileImagePath;
-  bool
-  _isLoggedIn = false;
-  String
-  _userName = 'Guest User';
 
+  // Error message from authentication
+  String?
+  _authError;
+
+  // Loading state during auth operations
+  bool
+  _isLoading = false;
+
+  // Constructor - loads profile on init
   ProfileController() {
     _loadProfile();
   }
 
+  // Getters for profile state
   UserStats
   get stats => _stats;
+
   String?
   get profileImagePath => _profileImagePath;
-  bool
-  get isLoggedIn => _isLoggedIn;
-  String
-  get userName => _userName;
 
+  bool
+  get isLoggedIn => _authService.isLoggedIn;
+
+  String
+  get userName =>
+      _authService.currentUser?.email ??
+      'Guest User';
+
+  String?
+  get authError => _authError;
+
+  bool
+  get isLoading => _isLoading;
+
+  // Load profile image from local storage
   Future<
     void
   >
@@ -46,14 +71,6 @@ class ProfileController
     _profileImagePath = prefs.getString(
       _imageKey,
     );
-    _isLoggedIn =
-        prefs.getBool(
-          _loginKey,
-        ) ??
-        false;
-    if (_isLoggedIn) {
-      _userName = 'Jules Engineer';
-    }
     notifyListeners();
   }
 
@@ -75,29 +92,104 @@ class ProfileController
   Future<
     void
   >
-  login() async {
-    _isLoggedIn = true;
-    _userName = 'Jules Engineer';
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(
-      _loginKey,
-      true,
-    );
+  signUp({
+    required String email,
+    required String password,
+  }) async {
+    _isLoading = true;
+    _authError = null;
     notifyListeners();
+
+    try {
+      await _authService.signUp(
+        email: email,
+        password: password,
+      );
+      _authError = null;
+    } catch (
+      e
+    ) {
+      _authError = e.toString().replaceAll(
+        'Exception: ',
+        '',
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<
+    void
+  >
+  login({
+    required String email,
+    required String password,
+  }) async {
+    _isLoading = true;
+    _authError = null;
+    notifyListeners();
+
+    try {
+      await _authService.signIn(
+        email: email,
+        password: password,
+      );
+      _authError = null;
+    } catch (
+      e
+    ) {
+      _authError = e.toString().replaceAll(
+        'Exception: ',
+        '',
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<
     void
   >
   logout() async {
-    _isLoggedIn = false;
-    _userName = 'Guest User';
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(
-      _loginKey,
-      false,
-    );
+    try {
+      await _authService.signOut();
+      _authError = null;
+      notifyListeners();
+    } catch (
+      e
+    ) {
+      _authError = e.toString();
+    }
+  }
+
+  Future<
+    void
+  >
+  resetPassword({
+    required String email,
+  }) async {
+    _isLoading = true;
+    _authError = null;
     notifyListeners();
+
+    try {
+      await _authService.resetPassword(
+        email: email,
+      );
+      _authError = null;
+    } catch (
+      e
+    ) {
+      _authError = e.toString().replaceAll(
+        'Exception: ',
+        '',
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   void

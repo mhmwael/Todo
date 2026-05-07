@@ -5,6 +5,7 @@ import '../../../controllers/category_controller.dart';
 import '../../../models/task.dart';
 import '../../../models/task_priority.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/services/speech_recognition_service.dart';
 
 class AddTaskDialog
     extends
@@ -41,6 +42,11 @@ class _AddTaskDialogState
   String?
   selectedCategory;
 
+  final SpeechRecognitionService
+  _speechService = SpeechRecognitionService();
+  bool
+  _isListening = false;
+
   @override
   void
   initState() {
@@ -56,12 +62,131 @@ class _AddTaskDialogState
         widget.task?.priority ??
         TaskPriority.medium;
     selectedCategory = widget.task?.category;
+    _initSpeech();
+  }
+
+  Future<
+    void
+  >
+  _initSpeech() async {
+    await _speechService.initialize();
+  }
+
+  Future<
+    void
+  >
+  _startListeningToSpeech() async {
+    if (_isListening) return;
+
+    print(
+      '=== START LISTENING DEBUG ===',
+    );
+    setState(
+      () {
+        _isListening = true;
+      },
+    );
+
+    try {
+      // Make sure it's initialized before listening
+      print(
+        'Initializing speech service...',
+      );
+      final isInitialized = await _speechService.initialize();
+      print(
+        'Speech service initialized: $isInitialized',
+      );
+
+      if (!isInitialized) {
+        throw Exception(
+          'Speech recognition not available on this device',
+        );
+      }
+
+      print(
+        'Starting to listen for speech...',
+      );
+      final result = await _speechService.startListening();
+      print(
+        'Speech result received: "$result"',
+      );
+
+      if (result !=
+              null &&
+          result.isNotEmpty) {
+        print(
+          'Setting title controller text to: "$result"',
+        );
+        if (mounted) {
+          setState(
+            () {
+              titleController.text = result;
+              print(
+                'Title controller text set. Value: "${titleController.text}"',
+              );
+            },
+          );
+        }
+      } else {
+        print(
+          'Result is null or empty. Result: "$result"',
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No speech recognized. Please try again and speak clearly.',
+              ),
+              backgroundColor: Colors.orange,
+              duration: Duration(
+                seconds: 2,
+              ),
+            ),
+          );
+        }
+      }
+    } catch (
+      e
+    ) {
+      print(
+        'Speech error: $e',
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error: ${e.toString()}',
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(
+              seconds: 2,
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(
+          () {
+            _isListening = false;
+          },
+        );
+      }
+      print(
+        '=== END LISTENING DEBUG ===',
+      );
+    }
   }
 
   @override
   void
   dispose() {
     titleController.dispose();
+    _speechService.cancel();
     super.dispose();
   }
 
@@ -218,7 +343,7 @@ class _AddTaskDialogState
               const SizedBox(
                 height: 24,
               ),
-              // Title
+              // Title with Voice Input
               TextField(
                 controller: titleController,
                 decoration: InputDecoration(
@@ -227,6 +352,18 @@ class _AddTaskDialogState
                     borderRadius: BorderRadius.circular(
                       8,
                     ),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isListening
+                          ? Icons.mic
+                          : Icons.mic_none,
+                      color: _isListening
+                          ? AppColors.primary
+                          : null,
+                    ),
+                    onPressed: _startListeningToSpeech,
+                    tooltip: 'Say task name',
                   ),
                 ),
               ),

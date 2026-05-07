@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import '../models/task.dart';
 import '../core/database/task_database_service.dart';
 import '../core/services/notification_service.dart';
+import '../core/services/firebase_auth_service.dart';
+import '../core/services/firebase_task_service.dart';
 
 class TaskController
     extends
@@ -10,6 +12,11 @@ class TaskController
   _notificationService = NotificationService();
   final TaskDatabaseService
   _dbService = TaskDatabaseService();
+  final FirebaseAuthService
+  _authService = FirebaseAuthService();
+  final FirebaseTaskService
+  _firebaseTaskService = FirebaseTaskService();
+
   List<
     Task
   >
@@ -22,9 +29,12 @@ class TaskController
   _focusedTaskId;
   String
   _selectedTimePeriod = 'All';
+  bool
+  _isSyncing = false;
 
   TaskController() {
     _loadTasks();
+    _listenToAuthChanges();
   }
 
   String
@@ -39,6 +49,61 @@ class TaskController
     Task
   >
   get allTasks => _allTasks;
+  bool
+  get isSyncing => _isSyncing;
+
+  void
+  _listenToAuthChanges() {
+    _authService.authStateChanges.listen(
+      (
+        user,
+      ) {
+        if (user !=
+            null) {
+          syncTasksFromFirebase();
+        } else {
+          _loadTasks();
+        }
+      },
+    );
+  }
+
+  Future<
+    void
+  >
+  syncTasksFromFirebase() async {
+    if (!_authService.isLoggedIn) return;
+
+    _isSyncing = true;
+    notifyListeners();
+
+    try {
+      final userId = _authService.getUserId()!;
+      final firebaseTasks = await _firebaseTaskService.getUserTasks(
+        userId,
+      );
+
+      _allTasks = firebaseTasks;
+
+      // Also update local database
+      for (var task in firebaseTasks) {
+        await _dbService.addTask(
+          task,
+        );
+      }
+
+      notifyListeners();
+    } catch (
+      e
+    ) {
+      print(
+        'Error syncing tasks from Firebase: $e',
+      );
+    } finally {
+      _isSyncing = false;
+      notifyListeners();
+    }
+  }
 
   bool
   _isTaskInTimePeriod(
@@ -441,6 +506,24 @@ class TaskController
     await _dbService.deleteTask(
       taskId,
     );
+
+    // Sync to Firebase if logged in
+    if (_authService.isLoggedIn) {
+      try {
+        final userId = _authService.getUserId()!;
+        await _firebaseTaskService.deleteTask(
+          userId,
+          taskId,
+        );
+      } catch (
+        e
+      ) {
+        print(
+          'Error syncing task deletion to Firebase: $e',
+        );
+      }
+    }
+
     _notificationService.cancelNotification(
       int.parse(
         taskId.substring(
@@ -464,6 +547,24 @@ class TaskController
     await _dbService.addTask(
       task,
     );
+
+    // Sync to Firebase if logged in
+    if (_authService.isLoggedIn) {
+      try {
+        final userId = _authService.getUserId()!;
+        await _firebaseTaskService.addTask(
+          userId,
+          task,
+        );
+      } catch (
+        e
+      ) {
+        print(
+          'Error syncing new task to Firebase: $e',
+        );
+      }
+    }
+
     _scheduleTaskNotification(
       task,
     );
@@ -490,6 +591,24 @@ class TaskController
       await _dbService.updateTask(
         updatedTask,
       );
+
+      // Sync to Firebase if logged in
+      if (_authService.isLoggedIn) {
+        try {
+          final userId = _authService.getUserId()!;
+          await _firebaseTaskService.updateTask(
+            userId,
+            updatedTask,
+          );
+        } catch (
+          e
+        ) {
+          print(
+            'Error syncing task update to Firebase: $e',
+          );
+        }
+      }
+
       _scheduleTaskNotification(
         updatedTask,
       );

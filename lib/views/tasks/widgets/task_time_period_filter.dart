@@ -4,13 +4,18 @@ import '../../../core/theme/app_colors.dart';
 import '../../../controllers/task_controller.dart';
 
 // Widget for filtering tasks by time period (Daily/Weekly/Monthly/All)
-class TaskTimePeriodFilter extends StatefulWidget {
+class TaskTimePeriodFilter
+    extends
+        StatefulWidget {
   const TaskTimePeriodFilter({
     super.key,
   });
 
   @override
-  State<TaskTimePeriodFilter> createState() => _TaskTimePeriodFilterState();
+  State<
+    TaskTimePeriodFilter
+  >
+  createState() => _TaskTimePeriodFilterState();
 }
 
 class _TaskTimePeriodFilterState

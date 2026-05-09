@@ -4,12 +4,15 @@ import '../../models/task_priority.dart';
 
 // Singleton service for syncing tasks with Firebase Firestore (cloud backup and multi-device sync)
 class FirebaseTaskService {
-  static final FirebaseTaskService _instance = FirebaseTaskService._internal();
+  static final FirebaseTaskService
+  _instance = FirebaseTaskService._internal();
   factory FirebaseTaskService() => _instance;
   FirebaseTaskService._internal();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore reference
-  static const String _tasksCollection = 'tasks'; // Collection name in Firestore
+  final FirebaseFirestore
+  _firestore = FirebaseFirestore.instance; // Firestore reference
+  static const String
+  _tasksCollection = 'tasks'; // Collection name in Firestore
 
   // Get reference to user's tasks collection in Firestore
   CollectionReference

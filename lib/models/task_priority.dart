@@ -6,9 +6,12 @@ enum TaskPriority {
 }
 
 // Extension providing string labels and integer values for priority levels
-extension TaskPriorityExtension on TaskPriority {
+extension TaskPriorityExtension
+    on
+        TaskPriority {
   // Get user-friendly priority label
-  String get label {
+  String
+  get label {
     switch (this) {
       case TaskPriority.low:
         return 'Low';
@@ -19,7 +22,8 @@ extension TaskPriorityExtension on TaskPriority {
     }
   }
 
-  int get value {
+  int
+  get value {
     switch (this) {
       case TaskPriority.low:
         return 0;

@@ -11,8 +11,10 @@ import '../../../core/services/speech_recognition_service.dart';
 class AddTaskDialog
     extends
         StatefulWidget {
-  final DateTime? initialDate; // Pre-selected date for new task
-  final Task? task; // Task to edit (null for new task)
+  final DateTime?
+  initialDate; // Pre-selected date for new task
+  final Task?
+  task; // Task to edit (null for new task)
 
   const AddTaskDialog({
     super.key,
@@ -21,17 +23,30 @@ class AddTaskDialog
   });
 
   @override
-  State<AddTaskDialog> createState() => _AddTaskDialogState();
+  State<
+    AddTaskDialog
+  >
+  createState() => _AddTaskDialogState();
 }
 
-class _AddTaskDialogState extends State<AddTaskDialog> {
-  late TextEditingController titleController; // Task title input
-  late DateTime selectedDate; // Selected due date
-  TaskPriority selectedPriority = TaskPriority.medium; // Priority level
-  String? selectedCategory; // Category assignment
+class _AddTaskDialogState
+    extends
+        State<
+          AddTaskDialog
+        > {
+  late TextEditingController
+  titleController; // Task title input
+  late DateTime
+  selectedDate; // Selected due date
+  TaskPriority
+  selectedPriority = TaskPriority.medium; // Priority level
+  String?
+  selectedCategory; // Category assignment
 
-  final SpeechRecognitionService _speechService = SpeechRecognitionService(); // Voice input
-  bool _isListening = false; // Voice input status
+  final SpeechRecognitionService
+  _speechService = SpeechRecognitionService(); // Voice input
+  bool
+  _isListening = false; // Voice input status
 
   @override
   void

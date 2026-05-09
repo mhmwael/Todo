@@ -21,13 +21,26 @@ class TaskController
   _firebaseTaskService = FirebaseTaskService();
 
   // State variables for tasks and filters
-  List<Task> _allTasks = [];
-  String _selectedCategory = 'All'; // Filter by category
-  String _searchQuery = ''; // Search filter
-  String? _focusedTaskId; // Currently focused task ID
-  String _selectedTimePeriod = 'All'; // Time period filter (Daily/Weekly/Monthly)
-  bool _isSyncing = false; // Syncing status indicator
-  StreamSubscription<List<Task>>? _tasksStreamSubscription; // Real-time Firebase listener
+  List<
+    Task
+  >
+  _allTasks = [];
+  String
+  _selectedCategory = 'All'; // Filter by category
+  String
+  _searchQuery = ''; // Search filter
+  String?
+  _focusedTaskId; // Currently focused task ID
+  String
+  _selectedTimePeriod = 'All'; // Time period filter (Daily/Weekly/Monthly)
+  bool
+  _isSyncing = false; // Syncing status indicator
+  StreamSubscription<
+    List<
+      Task
+    >
+  >?
+  _tasksStreamSubscription; // Real-time Firebase listener
 
   TaskController() {
     _loadTasks();
@@ -36,7 +49,8 @@ class TaskController
 
   // Clean up resources when controller is destroyed
   @override
-  void dispose() {
+  void
+  dispose() {
     _tasksStreamSubscription?.cancel();
     super.dispose();
   }
@@ -85,26 +99,48 @@ class TaskController
     try {
       final userId = _authService.getUserId()!;
       _tasksStreamSubscription?.cancel();
-      _tasksStreamSubscription = _firebaseTaskService.getUserTasksStream(userId).listen(
-        (tasks) {
-          _allTasks = tasks;
-          // Also update local database and schedule notifications
-          for (var task in tasks) {
-            _dbService.addTask(task);
-            _scheduleTaskNotification(task);
-          }
-          notifyListeners();
-        },
-        onError: (e) {
-          print('Error listening to tasks stream: $e');
-        },
+      _tasksStreamSubscription = _firebaseTaskService
+          .getUserTasksStream(
+            userId,
+          )
+          .listen(
+            (
+              tasks,
+            ) {
+              _allTasks = tasks;
+              // Also update local database and schedule notifications
+              for (var task in tasks) {
+                _dbService.addTask(
+                  task,
+                );
+                _scheduleTaskNotification(
+                  task,
+                );
+              }
+              notifyListeners();
+            },
+            onError:
+                (
+                  e,
+                ) {
+                  print(
+                    'Error listening to tasks stream: $e',
+                  );
+                },
+          );
+    } catch (
+      e
+    ) {
+      print(
+        'Error setting up real-time listener: $e',
       );
-    } catch (e) {
-      print('Error setting up real-time listener: $e');
     }
   }
 
-  Future<void> syncTasksFromFirebase() async {
+  Future<
+    void
+  >
+  syncTasksFromFirebase() async {
     if (!_authService.isLoggedIn) return;
 
     _isSyncing = true;
@@ -112,19 +148,29 @@ class TaskController
 
     try {
       final userId = _authService.getUserId()!;
-      final firebaseTasks = await _firebaseTaskService.getUserTasks(userId);
+      final firebaseTasks = await _firebaseTaskService.getUserTasks(
+        userId,
+      );
 
       _allTasks = firebaseTasks;
 
       // Also update local database and schedule notifications
       for (var task in firebaseTasks) {
-        await _dbService.addTask(task);
-        _scheduleTaskNotification(task);
+        await _dbService.addTask(
+          task,
+        );
+        _scheduleTaskNotification(
+          task,
+        );
       }
 
       notifyListeners();
-    } catch (e) {
-      print('Error syncing tasks from Firebase: $e');
+    } catch (
+      e
+    ) {
+      print(
+        'Error syncing tasks from Firebase: $e',
+      );
     } finally {
       _isSyncing = false;
       notifyListeners();
@@ -199,11 +245,16 @@ class TaskController
     }
   }
 
-  Future<void> _loadTasks() async {
+  Future<
+    void
+  >
+  _loadTasks() async {
     _allTasks = await _dbService.getAllTasks();
     // Schedule notifications for all pending tasks
     for (var task in _allTasks) {
-      _scheduleTaskNotification(task);
+      _scheduleTaskNotification(
+        task,
+      );
     }
     notifyListeners();
   }
@@ -428,8 +479,12 @@ class TaskController
             userId,
             updatedTask,
           );
-        } catch (e) {
-          print('Error syncing task pin to Firebase: $e');
+        } catch (
+          e
+        ) {
+          print(
+            'Error syncing task pin to Firebase: $e',
+          );
         }
       }
 
@@ -482,8 +537,12 @@ class TaskController
             userId,
             updatedTask,
           );
-        } catch (e) {
-          print('Error syncing task completion to Firebase: $e');
+        } catch (
+          e
+        ) {
+          print(
+            'Error syncing task completion to Firebase: $e',
+          );
         }
       }
 
@@ -678,7 +737,9 @@ class TaskController
         task.dueDate.isAfter(
           DateTime.now(),
         )) {
-      print('Task Controller: Scheduling notification for task "${task.title}" with due date ${task.dueDate}');
+      print(
+        'Task Controller: Scheduling notification for task "${task.title}" with due date ${task.dueDate}',
+      );
       _notificationService.scheduleNotification(
         id: int.parse(
           task.id.substring(
@@ -692,9 +753,13 @@ class TaskController
       );
     } else {
       if (task.isCompleted) {
-        print('Task Controller: Not scheduling notification for "${task.title}" - task is completed');
+        print(
+          'Task Controller: Not scheduling notification for "${task.title}" - task is completed',
+        );
       } else {
-        print('Task Controller: Not scheduling notification for "${task.title}" - due date is in the past');
+        print(
+          'Task Controller: Not scheduling notification for "${task.title}" - due date is in the past',
+        );
       }
     }
   }

@@ -4,7 +4,8 @@ import './app_colors.dart';
 // Central theme configuration for light and dark modes
 class AppTheme {
   // Light theme definition with Material 3 design
-  static ThemeData get lightTheme {
+  static ThemeData
+  get lightTheme {
     return ThemeData(
       useMaterial3: true, // Material Design 3
       colorScheme: ColorScheme.fromSeed(
@@ -27,7 +28,9 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            12,
+          ),
         ),
         color: AppColors.surface,
       ),
@@ -38,7 +41,9 @@ class AppTheme {
           color: AppColors.textPrimary,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(
+            20,
+          ),
           side: const BorderSide(
             color: AppColors.divider,
           ),
@@ -53,7 +58,9 @@ class AppTheme {
             vertical: 12,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(
+              8,
+            ),
           ),
         ),
       ),
@@ -80,22 +87,29 @@ class AppTheme {
     );
   }
 
-  static ThemeData get darkTheme {
+  static ThemeData
+  get darkTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
         brightness: Brightness.dark,
       ),
-      scaffoldBackgroundColor: const Color(0xFF121212),
+      scaffoldBackgroundColor: const Color(
+        0xFF121212,
+      ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Color(0xFF1E1E1E),
+        backgroundColor: Color(
+          0xFF1E1E1E,
+        ),
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Color(0xFF1E1E1E),
+        backgroundColor: Color(
+          0xFF1E1E1E,
+        ),
         selectedItemColor: AppColors.primary,
         unselectedItemColor: Colors.white70,
         elevation: 8,
@@ -103,9 +117,13 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            12,
+          ),
         ),
-        color: const Color(0xFF1E1E1E),
+        color: const Color(
+          0xFF1E1E1E,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -116,7 +134,9 @@ class AppTheme {
             vertical: 12,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(
+              8,
+            ),
           ),
         ),
       ),

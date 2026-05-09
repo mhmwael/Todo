@@ -9,25 +9,41 @@ class TaskDatabaseService {
   static const _databaseVersion = 1;
   static const _tasksTable = 'tasks'; // Table name for task storage
 
-  static final TaskDatabaseService _instance = TaskDatabaseService._internal();
+  static final TaskDatabaseService
+  _instance = TaskDatabaseService._internal();
   factory TaskDatabaseService() => _instance;
   TaskDatabaseService._internal();
 
-  Database? _database;
+  Database?
+  _database;
 
   // Lazy-load database connection
-  Future<Database> get database async {
+  Future<
+    Database
+  >
+  get database async {
     _database ??= await _initDatabase();
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
-    final path = join(await getDatabasesPath(), _databaseName);
+  Future<
+    Database
+  >
+  _initDatabase() async {
+    final path = join(
+      await getDatabasesPath(),
+      _databaseName,
+    );
     return await openDatabase(
       path,
       version: _databaseVersion,
-      onCreate: (db, version) async {
-        await db.execute('''
+      onCreate:
+          (
+            db,
+            version,
+          ) async {
+            await db.execute(
+              '''
           CREATE TABLE $_tasksTable (
             id TEXT PRIMARY KEY,
             title TEXT NOT NULL,
@@ -38,31 +54,75 @@ class TaskDatabaseService {
             category TEXT NOT NULL,
             isPinned INTEGER NOT NULL DEFAULT 0
           )
-        ''');
-      },
+        ''',
+            );
+          },
     );
   }
 
-  Future<List<Task>> getAllTasks() async {
+  Future<
+    List<
+      Task
+    >
+  >
+  getAllTasks() async {
     final db = await database;
-    final maps = await db.query(_tasksTable);
-    return maps.map((map) {
-      return Task(
-        id: map['id'] as String,
-        title: map['title'] as String,
-        description: map['description'] as String?,
-        dueDate: DateTime.parse(map['dueDate'] as String),
-        priority: TaskPriority.values.firstWhere(
-          (e) => e.toString().split('.').last == map['priority'],
-        ),
-        isCompleted: (map['isCompleted'] as int) == 1,
-        category: map['category'] as String,
-        isPinned: (map['isPinned'] as int? ?? 0) == 1,
-      );
-    }).toList();
+    final maps = await db.query(
+      _tasksTable,
+    );
+    return maps.map(
+      (
+        map,
+      ) {
+        return Task(
+          id:
+              map['id']
+                  as String,
+          title:
+              map['title']
+                  as String,
+          description:
+              map['description']
+                  as String?,
+          dueDate: DateTime.parse(
+            map['dueDate']
+                as String,
+          ),
+          priority: TaskPriority.values.firstWhere(
+            (
+              e,
+            ) =>
+                e
+                    .toString()
+                    .split(
+                      '.',
+                    )
+                    .last ==
+                map['priority'],
+          ),
+          isCompleted:
+              (map['isCompleted']
+                  as int) ==
+              1,
+          category:
+              map['category']
+                  as String,
+          isPinned:
+              (map['isPinned']
+                      as int? ??
+                  0) ==
+              1,
+        );
+      },
+    ).toList();
   }
 
-  Future<void> addTask(Task task) async {
+  Future<
+    void
+  >
+  addTask(
+    Task task,
+  ) async {
     final db = await database;
     await db.insert(
       _tasksTable,
@@ -71,16 +131,30 @@ class TaskDatabaseService {
         'title': task.title,
         'description': task.description,
         'dueDate': task.dueDate.toIso8601String(),
-        'priority': task.priority.toString().split('.').last,
-        'isCompleted': task.isCompleted ? 1 : 0,
+        'priority': task.priority
+            .toString()
+            .split(
+              '.',
+            )
+            .last,
+        'isCompleted': task.isCompleted
+            ? 1
+            : 0,
         'category': task.category,
-        'isPinned': task.isPinned ? 1 : 0,
+        'isPinned': task.isPinned
+            ? 1
+            : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<void> updateTask(Task task) async {
+  Future<
+    void
+  >
+  updateTask(
+    Task task,
+  ) async {
     final db = await database;
     await db.update(
       _tasksTable,
@@ -88,18 +162,40 @@ class TaskDatabaseService {
         'title': task.title,
         'description': task.description,
         'dueDate': task.dueDate.toIso8601String(),
-        'priority': task.priority.toString().split('.').last,
-        'isCompleted': task.isCompleted ? 1 : 0,
+        'priority': task.priority
+            .toString()
+            .split(
+              '.',
+            )
+            .last,
+        'isCompleted': task.isCompleted
+            ? 1
+            : 0,
         'category': task.category,
-        'isPinned': task.isPinned ? 1 : 0,
+        'isPinned': task.isPinned
+            ? 1
+            : 0,
       },
       where: 'id = ?',
-      whereArgs: [task.id],
+      whereArgs: [
+        task.id,
+      ],
     );
   }
 
-  Future<void> deleteTask(String id) async {
+  Future<
+    void
+  >
+  deleteTask(
+    String id,
+  ) async {
     final db = await database;
-    await db.delete(_tasksTable, where: 'id = ?', whereArgs: [id]);
+    await db.delete(
+      _tasksTable,
+      where: 'id = ?',
+      whereArgs: [
+        id,
+      ],
+    );
   }
 }

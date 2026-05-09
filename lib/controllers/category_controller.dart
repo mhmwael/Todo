@@ -1,14 +1,24 @@
-import 'package:flutter/foundation.dart' hide Category;
+import 'package:flutter/foundation.dart'
+    hide
+        Category;
 import '../models/category.dart';
 import '../core/database/category_database_service.dart';
 
 // Controller managing task categories for organization and filtering
-class CategoryController extends ChangeNotifier {
-  final CategoryDatabaseService _databaseService = CategoryDatabaseService(); // Local DB
+class CategoryController
+    extends
+        ChangeNotifier {
+  final CategoryDatabaseService
+  _databaseService = CategoryDatabaseService(); // Local DB
 
-  List<Category> _categories = []; // List of all categories
-  bool _isLoading = true; // Loading state
-  String? _error; // Error message
+  List<
+    Category
+  >
+  _categories = []; // List of all categories
+  bool
+  _isLoading = true; // Loading state
+  String?
+  _error; // Error message
 
   List<
     Category

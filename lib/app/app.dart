@@ -25,7 +25,10 @@ class App
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => CategoryController(), // Category management
+          create:
+              (
+                _,
+              ) => CategoryController(), // Category management
         ),
         ChangeNotifierProvider(
           create:
@@ -46,21 +49,32 @@ class App
               ) => ProfileController(),
         ),
         ChangeNotifierProvider(
-          create: (_) => ThemeController(),
+          create:
+              (
+                _,
+              ) => ThemeController(),
         ),
       ],
-      child: Consumer<ThemeController>(
-        builder: (context, themeController, _) {
-          return MaterialApp(
-            title: 'Task Manager',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeController.themeMode,
-            home: const MainShell(),
-          );
-        },
-      ),
+      child:
+          Consumer<
+            ThemeController
+          >(
+            builder:
+                (
+                  context,
+                  themeController,
+                  _,
+                ) {
+                  return MaterialApp(
+                    title: 'Task Manager',
+                    debugShowCheckedModeBanner: false,
+                    theme: AppTheme.lightTheme,
+                    darkTheme: AppTheme.darkTheme,
+                    themeMode: themeController.themeMode,
+                    home: const MainShell(),
+                  );
+                },
+          ),
     );
   }
 }

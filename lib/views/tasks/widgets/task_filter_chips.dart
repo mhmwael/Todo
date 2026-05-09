@@ -4,8 +4,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../controllers/category_controller.dart';
 
 // Widget displaying category filter chips for task filtering
-class TaskFilterChips extends StatefulWidget {
-  final ValueChanged<String> onCategoryChanged; // Callback when category selection changes
+class TaskFilterChips
+    extends
+        StatefulWidget {
+  final ValueChanged<
+    String
+  >
+  onCategoryChanged; // Callback when category selection changes
 
   const TaskFilterChips({
     super.key,
@@ -13,10 +18,17 @@ class TaskFilterChips extends StatefulWidget {
   });
 
   @override
-  State<TaskFilterChips> createState() => _TaskFilterChipsState();
+  State<
+    TaskFilterChips
+  >
+  createState() => _TaskFilterChipsState();
 }
 
-class _TaskFilterChipsState extends State<TaskFilterChips> {
+class _TaskFilterChipsState
+    extends
+        State<
+          TaskFilterChips
+        > {
   late String
   selectedCategory;
   final TextEditingController
@@ -140,10 +152,14 @@ class _TaskFilterChipsState extends State<TaskFilterChips> {
                                             margin: const EdgeInsets.symmetric(
                                               vertical: 4.0,
                                             ),
-                                            color: Theme.of(context)
-                                                        .brightness ==
+                                            color:
+                                                Theme.of(
+                                                      context,
+                                                    ).brightness ==
                                                     Brightness.dark
-                                                ? const Color(0xFF1E1E1E)
+                                                ? const Color(
+                                                    0xFF1E1E1E,
+                                                  )
                                                 : AppColors.surface,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(
@@ -154,16 +170,17 @@ class _TaskFilterChipsState extends State<TaskFilterChips> {
                                             child: ListTile(
                                               title: Text(
                                                 category.name,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                      color: Theme.of(context)
-                                                                  .brightness ==
+                                                style:
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.titleMedium?.copyWith(
+                                                      color:
+                                                          Theme.of(
+                                                                context,
+                                                              ).brightness ==
                                                               Brightness.dark
                                                           ? Colors.white
-                                                          : AppColors
-                                                              .textPrimary,
+                                                          : AppColors.textPrimary,
                                                     ),
                                               ),
                                               trailing: IconButton(
@@ -306,18 +323,24 @@ class _TaskFilterChipsState extends State<TaskFilterChips> {
                                           );
                                         },
                                     backgroundColor:
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? const Color(0xFF1E1E1E)
-                                            : AppColors.surface,
+                                        Theme.of(
+                                              context,
+                                            ).brightness ==
+                                            Brightness.dark
+                                        ? const Color(
+                                            0xFF1E1E1E,
+                                          )
+                                        : AppColors.surface,
                                     selectedColor: AppColors.primary,
                                     labelStyle: TextStyle(
                                       color: isSelected
                                           ? Colors.white
-                                          : (Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : AppColors.textPrimary),
+                                          : (Theme.of(
+                                                      context,
+                                                    ).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : AppColors.textPrimary),
                                       fontWeight: isSelected
                                           ? FontWeight.bold
                                           : FontWeight.normal,
@@ -349,7 +372,11 @@ class _TaskFilterChipsState extends State<TaskFilterChips> {
                       ),
                       icon: Icon(
                         Icons.more_vert,
-                        color: Theme.of(context).brightness == Brightness.dark
+                        color:
+                            Theme.of(
+                                  context,
+                                ).brightness ==
+                                Brightness.dark
                             ? Colors.white
                             : AppColors.textPrimary,
                       ),

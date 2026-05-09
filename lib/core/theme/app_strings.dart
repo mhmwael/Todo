@@ -1,22 +1,34 @@
 // Centralized text strings for localization and consistency across the app
 class AppStrings {
   // Navigation tab labels
-  static const String tasks = 'Tasks';
-  static const String calendar = 'Calendar';
-  static const String profile = 'Profile';
+  static const String
+  tasks = 'Tasks';
+  static const String
+  calendar = 'Calendar';
+  static const String
+  profile = 'Profile';
 
   // Tasks page labels
-  static const String allCategories = 'All';
-  static const String workCategory = 'Work';
-  static const String personalCategory = 'Personal';
-  static const String shoppingCategory = 'Shopping';
-  static const String pendingTasks = 'Pending Tasks';
-  static const String noPendingTasks = 'No pending tasks';
-  static const String addNewTask = 'Add New Task';
+  static const String
+  allCategories = 'All';
+  static const String
+  workCategory = 'Work';
+  static const String
+  personalCategory = 'Personal';
+  static const String
+  shoppingCategory = 'Shopping';
+  static const String
+  pendingTasks = 'Pending Tasks';
+  static const String
+  noPendingTasks = 'No pending tasks';
+  static const String
+  addNewTask = 'Add New Task';
 
   // Task card action labels
-  static const String markComplete = 'Mark complete';
-  static const String high = 'High';
+  static const String
+  markComplete = 'Mark complete';
+  static const String
+  high = 'High';
   static const String
   medium = 'Medium';
   static const String

@@ -8,7 +8,9 @@ import '../tasks/widgets/task_card.dart';
 import '../tasks/widgets/add_task_dialog.dart';
 
 // Calendar view showing tasks organized by selected date
-class CalendarPage extends StatelessWidget {
+class CalendarPage
+    extends
+        StatelessWidget {
   const CalendarPage({
     super.key,
   });
@@ -89,35 +91,55 @@ class CalendarPage extends StatelessWidget {
                           final picked = await showDatePicker(
                             context: context,
                             initialDate: selectedDate,
-                            firstDate: DateTime(2024),
-                            lastDate: DateTime(2035),
+                            firstDate: DateTime(
+                              2024,
+                            ),
+                            lastDate: DateTime(
+                              2035,
+                            ),
                             initialEntryMode: DatePickerEntryMode.calendarOnly,
-                            builder: (context, child) {
-                              final isDarkMode =
-                                  Theme.of(context).brightness ==
+                            builder:
+                                (
+                                  context,
+                                  child,
+                                ) {
+                                  final isDarkMode =
+                                      Theme.of(
+                                        context,
+                                      ).brightness ==
                                       Brightness.dark;
-                              return Theme(
-                                data: Theme.of(context).copyWith(
-                                  colorScheme: isDarkMode
-                                      ? const ColorScheme.dark(
-                                          primary: AppColors.primary,
-                                          onPrimary: Colors.white,
-                                          surface: Color(0xFF1E1E1E),
-                                          onSurface: Colors.white,
-                                        )
-                                      : const ColorScheme.light(
-                                          primary: AppColors.primary,
-                                          onPrimary: Colors.white,
-                                          surface: Colors.white,
-                                          onSurface: AppColors.textPrimary,
+                                  return Theme(
+                                    data:
+                                        Theme.of(
+                                          context,
+                                        ).copyWith(
+                                          colorScheme: isDarkMode
+                                              ? const ColorScheme.dark(
+                                                  primary: AppColors.primary,
+                                                  onPrimary: Colors.white,
+                                                  surface: Color(
+                                                    0xFF1E1E1E,
+                                                  ),
+                                                  onSurface: Colors.white,
+                                                )
+                                              : const ColorScheme.light(
+                                                  primary: AppColors.primary,
+                                                  onPrimary: Colors.white,
+                                                  surface: Colors.white,
+                                                  onSurface: AppColors.textPrimary,
+                                                ),
                                         ),
-                                ),
-                                child: RepaintBoundary(child: child!),
-                              );
-                            },
+                                    child: RepaintBoundary(
+                                      child: child!,
+                                    ),
+                                  );
+                                },
                           );
-                          if (picked != null) {
-                            calendarController.setSelectedDate(picked);
+                          if (picked !=
+                              null) {
+                            calendarController.setSelectedDate(
+                              picked,
+                            );
                           }
                         },
                         child: Text(
@@ -268,7 +290,13 @@ class CalendarPage extends StatelessWidget {
     final daysInMonth = lastDayOfMonth.day;
     final firstWeekday = firstDayOfMonth.weekday;
     // Only show markers for incomplete tasks
-    final taskList = allTasks.where((task) => !task.isCompleted).toList();
+    final taskList = allTasks
+        .where(
+          (
+            task,
+          ) => !task.isCompleted,
+        )
+        .toList();
 
     return Column(
       children: [
@@ -374,9 +402,14 @@ class CalendarPage extends StatelessWidget {
                               ? AppColors.primary.withOpacity(
                                   0.1,
                                 )
-                              : (Theme.of(context).brightness == Brightness.dark
-                                  ? const Color(0xFF1E1E1E)
-                                  : AppColors.surface),
+                              : (Theme.of(
+                                          context,
+                                        ).brightness ==
+                                        Brightness.dark
+                                    ? const Color(
+                                        0xFF1E1E1E,
+                                      )
+                                    : AppColors.surface),
                           border: hasTask
                               ? Border.all(
                                   color: AppColors.primary,
@@ -393,9 +426,12 @@ class CalendarPage extends StatelessWidget {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : (Theme.of(context).brightness == Brightness.dark
-                                      ? Colors.white
-                                      : AppColors.textPrimary),
+                                  : (Theme.of(
+                                              context,
+                                            ).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : AppColors.textPrimary),
                               fontWeight: hasTask
                                   ? FontWeight.bold
                                   : FontWeight.normal,

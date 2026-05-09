@@ -3,13 +3,9 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../controllers/category_controller.dart';
 
-class TaskFilterChips
-    extends
-        StatefulWidget {
-  final ValueChanged<
-    String
-  >
-  onCategoryChanged;
+// Widget displaying category filter chips for task filtering
+class TaskFilterChips extends StatefulWidget {
+  final ValueChanged<String> onCategoryChanged; // Callback when category selection changes
 
   const TaskFilterChips({
     super.key,
@@ -17,17 +13,10 @@ class TaskFilterChips
   });
 
   @override
-  State<
-    TaskFilterChips
-  >
-  createState() => _TaskFilterChipsState();
+  State<TaskFilterChips> createState() => _TaskFilterChipsState();
 }
 
-class _TaskFilterChipsState
-    extends
-        State<
-          TaskFilterChips
-        > {
+class _TaskFilterChipsState extends State<TaskFilterChips> {
   late String
   selectedCategory;
   final TextEditingController

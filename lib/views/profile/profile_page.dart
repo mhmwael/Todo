@@ -7,22 +7,16 @@ import '../../controllers/profile_controller.dart';
 import '../../controllers/theme_controller.dart';
 import '../auth/auth_dialog.dart';
 
-class ProfilePage
-    extends
-        StatelessWidget {
+// User profile page with profile picture, statistics, authentication, and theme settings
+class ProfilePage extends StatelessWidget {
   const ProfilePage({
     super.key,
   });
 
   @override
-  Widget
-  build(
-    BuildContext context,
-  ) {
-    return Consumer2<
-      ProfileController,
-      ThemeController
-    >(
+  Widget build(BuildContext context) {
+    // Listen to profile and theme controller changes
+    return Consumer2<ProfileController, ThemeController>(
       builder:
           (
             context,

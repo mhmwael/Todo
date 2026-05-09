@@ -1,4 +1,6 @@
+// Utility class for date formatting and comparison operations
 class DateHelper {
+  // Format date as "Today", "Tomorrow", or "MM/DD/YYYY"
   static String formatDate(DateTime date) {
     final today = DateTime.now();
     final tomorrow = today.add(const Duration(days: 1));
@@ -16,10 +18,12 @@ class DateHelper {
     }
   }
 
+  // Format datetime as "Today at HH:MM" format
   static String formatDateTime(DateTime dateTime) {
     return '${formatDate(dateTime)} at ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
+  // Check if two dates are the same day (ignoring time)
   static bool isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
         date1.month == date2.month &&

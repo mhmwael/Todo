@@ -9,6 +9,7 @@ import 'widgets/task_filter_chips.dart';
 import 'widgets/task_time_period_filter.dart';
 import 'widgets/add_task_dialog.dart';
 
+// Main tasks listing page with filtering, search, and task management
 class TasksPage
     extends
         StatefulWidget {
@@ -17,54 +18,34 @@ class TasksPage
   });
 
   @override
-  State<
-    TasksPage
-  >
-  createState() => _TasksPageState();
+  State<TasksPage> createState() => _TasksPageState();
 }
 
 class _TasksPageState
     extends
-        State<
-          TasksPage
-        > {
-  late ConfettiController
-  _confettiController;
+        State<TasksPage> {
+  late ConfettiController _confettiController; // Celebration animation on task completion
 
   @override
-  void
-  initState() {
+  void initState() {
     super.initState();
     _confettiController = ConfettiController(
-      duration: const Duration(
-        seconds: 1,
-      ),
+      duration: const Duration(seconds: 1),
     );
   }
 
   @override
-  void
-  dispose() {
+  void dispose() {
     _confettiController.dispose();
     super.dispose();
   }
 
   @override
-  Widget
-  build(
-    BuildContext context,
-  ) {
-    return Consumer<
-      TaskController
-    >(
-      builder:
-          (
-            context,
-            taskController,
-            _,
-          ) {
-            final pendingTasks = taskController.pendingTasks;
-            final completedTasks = taskController.completedTasks;
+  Widget build(BuildContext context) {
+    return Consumer<TaskController>(
+      builder: (context, taskController, _) {
+        final pendingTasks = taskController.pendingTasks; // Uncompleted tasks
+        final completedTasks = taskController.completedTasks; // Completed tasks
 
             return Stack(
               alignment: Alignment.topCenter,
@@ -272,13 +253,13 @@ class _TasksPageState
                                 ),
                                 child: Divider(),
                               ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
                                 child: Text(
-                                  'Completed Tasks',
-                                  style: TextStyle(
+                                  'Completed Tasks (${completedTasks.length})',
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),

@@ -3,10 +3,11 @@ import 'package:path/path.dart';
 import '../../models/task.dart';
 import '../../models/task_priority.dart';
 
+// Local SQLite database service for offline task persistence (fallback when no internet)
 class TaskDatabaseService {
   static const _databaseName = 'tasks_v3.db';
   static const _databaseVersion = 1;
-  static const _tasksTable = 'tasks';
+  static const _tasksTable = 'tasks'; // Table name for task storage
 
   static final TaskDatabaseService _instance = TaskDatabaseService._internal();
   factory TaskDatabaseService() => _instance;
@@ -14,6 +15,7 @@ class TaskDatabaseService {
 
   Database? _database;
 
+  // Lazy-load database connection
   Future<Database> get database async {
     _database ??= await _initDatabase();
     return _database!;

@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 import '../models/task.dart';
 import '../core/database/task_database_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/firebase_auth_service.dart';
 import '../core/services/firebase_task_service.dart';
 
+// Controller managing task state, sync, filtering, and CRUD operations using Provider pattern
 class TaskController
     extends
         ChangeNotifier {
+  // Services for notifications, local DB, auth, and Firebase syncing
   final NotificationService
   _notificationService = NotificationService();
   final TaskDatabaseService
@@ -17,24 +20,25 @@ class TaskController
   final FirebaseTaskService
   _firebaseTaskService = FirebaseTaskService();
 
-  List<
-    Task
-  >
-  _allTasks = [];
-  String
-  _selectedCategory = 'All';
-  String
-  _searchQuery = '';
-  String?
-  _focusedTaskId;
-  String
-  _selectedTimePeriod = 'All';
-  bool
-  _isSyncing = false;
+  // State variables for tasks and filters
+  List<Task> _allTasks = [];
+  String _selectedCategory = 'All'; // Filter by category
+  String _searchQuery = ''; // Search filter
+  String? _focusedTaskId; // Currently focused task ID
+  String _selectedTimePeriod = 'All'; // Time period filter (Daily/Weekly/Monthly)
+  bool _isSyncing = false; // Syncing status indicator
+  StreamSubscription<List<Task>>? _tasksStreamSubscription; // Real-time Firebase listener
 
   TaskController() {
     _loadTasks();
     _listenToAuthChanges();
+  }
+
+  // Clean up resources when controller is destroyed
+  @override
+  void dispose() {
+    _tasksStreamSubscription?.cancel();
+    super.dispose();
   }
 
   String
@@ -52,8 +56,10 @@ class TaskController
   bool
   get isSyncing => _isSyncing;
 
+  // Listen for authentication state changes and sync tasks accordingly
   void
   _listenToAuthChanges() {
+    // Listen for auth state changes and setup/teardown Firebase sync
     _authService.authStateChanges.listen(
       (
         user,
@@ -61,17 +67,44 @@ class TaskController
         if (user !=
             null) {
           syncTasksFromFirebase();
+          _setupRealtimeTasksListener();
         } else {
+          _tasksStreamSubscription?.cancel();
           _loadTasks();
         }
       },
     );
   }
 
-  Future<
-    void
-  >
-  syncTasksFromFirebase() async {
+  // Setup real-time listener on Firebase to sync tasks across devices instantly
+  void
+  _setupRealtimeTasksListener() {
+    // Subscribe to real-time Firebase changes to sync tasks instantly across devices
+    if (!_authService.isLoggedIn) return;
+
+    try {
+      final userId = _authService.getUserId()!;
+      _tasksStreamSubscription?.cancel();
+      _tasksStreamSubscription = _firebaseTaskService.getUserTasksStream(userId).listen(
+        (tasks) {
+          _allTasks = tasks;
+          // Also update local database and schedule notifications
+          for (var task in tasks) {
+            _dbService.addTask(task);
+            _scheduleTaskNotification(task);
+          }
+          notifyListeners();
+        },
+        onError: (e) {
+          print('Error listening to tasks stream: $e');
+        },
+      );
+    } catch (e) {
+      print('Error setting up real-time listener: $e');
+    }
+  }
+
+  Future<void> syncTasksFromFirebase() async {
     if (!_authService.isLoggedIn) return;
 
     _isSyncing = true;
@@ -79,26 +112,19 @@ class TaskController
 
     try {
       final userId = _authService.getUserId()!;
-      final firebaseTasks = await _firebaseTaskService.getUserTasks(
-        userId,
-      );
+      final firebaseTasks = await _firebaseTaskService.getUserTasks(userId);
 
       _allTasks = firebaseTasks;
 
-      // Also update local database
+      // Also update local database and schedule notifications
       for (var task in firebaseTasks) {
-        await _dbService.addTask(
-          task,
-        );
+        await _dbService.addTask(task);
+        _scheduleTaskNotification(task);
       }
 
       notifyListeners();
-    } catch (
-      e
-    ) {
-      print(
-        'Error syncing tasks from Firebase: $e',
-      );
+    } catch (e) {
+      print('Error syncing tasks from Firebase: $e');
     } finally {
       _isSyncing = false;
       notifyListeners();
@@ -173,11 +199,12 @@ class TaskController
     }
   }
 
-  Future<
-    void
-  >
-  _loadTasks() async {
+  Future<void> _loadTasks() async {
     _allTasks = await _dbService.getAllTasks();
+    // Schedule notifications for all pending tasks
+    for (var task in _allTasks) {
+      _scheduleTaskNotification(task);
+    }
     notifyListeners();
   }
 
@@ -392,6 +419,20 @@ class TaskController
       await _dbService.updateTask(
         updatedTask,
       );
+
+      // Sync to Firebase if logged in
+      if (_authService.isLoggedIn) {
+        try {
+          final userId = _authService.getUserId()!;
+          await _firebaseTaskService.updateTask(
+            userId,
+            updatedTask,
+          );
+        } catch (e) {
+          print('Error syncing task pin to Firebase: $e');
+        }
+      }
+
       notifyListeners();
     }
   }
@@ -432,6 +473,19 @@ class TaskController
       await _dbService.updateTask(
         updatedTask,
       );
+
+      // Sync to Firebase if logged in
+      if (_authService.isLoggedIn) {
+        try {
+          final userId = _authService.getUserId()!;
+          await _firebaseTaskService.updateTask(
+            userId,
+            updatedTask,
+          );
+        } catch (e) {
+          print('Error syncing task completion to Firebase: $e');
+        }
+      }
 
       if (isCompleted) {
         await _enforceCompletedTasksLimit();
@@ -624,6 +678,7 @@ class TaskController
         task.dueDate.isAfter(
           DateTime.now(),
         )) {
+      print('Task Controller: Scheduling notification for task "${task.title}" with due date ${task.dueDate}');
       _notificationService.scheduleNotification(
         id: int.parse(
           task.id.substring(
@@ -635,6 +690,12 @@ class TaskController
         body: task.title,
         scheduledTime: task.dueDate,
       );
+    } else {
+      if (task.isCompleted) {
+        print('Task Controller: Not scheduling notification for "${task.title}" - task is completed');
+      } else {
+        print('Task Controller: Not scheduling notification for "${task.title}" - due date is in the past');
+      }
     }
   }
 }

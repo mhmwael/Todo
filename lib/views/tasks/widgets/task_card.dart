@@ -4,13 +4,14 @@ import '../../../models/task.dart';
 import '../../../models/task_priority.dart';
 import 'add_task_dialog.dart';
 
+// UI card widget displaying a single task with completion checkbox, priority badge, and action buttons
 class TaskCard extends StatefulWidget {
-  final Task task;
-  final VoidCallback onDelete;
-  final ValueChanged<bool> onToggleComplete;
-  final VoidCallback? onPin;
-  final VoidCallback? onFocus;
-  final bool isFocused;
+  final Task task; // The task to display
+  final VoidCallback onDelete; // Delete task callback
+  final ValueChanged<bool> onToggleComplete; // Mark task complete/incomplete
+  final VoidCallback? onPin; // Pin/unpin task
+  final VoidCallback? onFocus; // Focus on specific task
+  final bool isFocused; // Whether this task is currently focused
 
   const TaskCard({
     super.key,

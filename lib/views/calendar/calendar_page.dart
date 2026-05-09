@@ -7,9 +7,8 @@ import '../../controllers/task_controller.dart';
 import '../tasks/widgets/task_card.dart';
 import '../tasks/widgets/add_task_dialog.dart';
 
-class CalendarPage
-    extends
-        StatelessWidget {
+// Calendar view showing tasks organized by selected date
+class CalendarPage extends StatelessWidget {
   const CalendarPage({
     super.key,
   });

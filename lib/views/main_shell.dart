@@ -4,30 +4,20 @@ import 'tasks/tasks_page.dart';
 import 'calendar/calendar_page.dart';
 import 'profile/profile_page.dart';
 
-class MainShell
-    extends
-        StatefulWidget {
+// Bottom navigation shell containing tasks, calendar, and profile pages
+class MainShell extends StatefulWidget {
   const MainShell({
     super.key,
   });
 
   @override
-  State<
-    MainShell
-  >
-  createState() => _MainShellState();
+  State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState
-    extends
-        State<
-          MainShell
-        > {
-  int
-  _selectedIndex = 0;
+class _MainShellState extends State<MainShell> {
+  int _selectedIndex = 0; // Currently selected tab index
 
-  static const List<
-    Widget
+  static const List<Widget
   >
   _pages =
       <

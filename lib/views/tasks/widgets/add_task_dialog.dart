@@ -7,13 +7,12 @@ import '../../../models/task_priority.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/services/speech_recognition_service.dart';
 
+// Dialog for creating new tasks or editing existing ones with priority, category, and date selection
 class AddTaskDialog
     extends
         StatefulWidget {
-  final DateTime?
-  initialDate;
-  final Task?
-  task;
+  final DateTime? initialDate; // Pre-selected date for new task
+  final Task? task; // Task to edit (null for new task)
 
   const AddTaskDialog({
     super.key,
@@ -22,30 +21,17 @@ class AddTaskDialog
   });
 
   @override
-  State<
-    AddTaskDialog
-  >
-  createState() => _AddTaskDialogState();
+  State<AddTaskDialog> createState() => _AddTaskDialogState();
 }
 
-class _AddTaskDialogState
-    extends
-        State<
-          AddTaskDialog
-        > {
-  late TextEditingController
-  titleController;
-  late DateTime
-  selectedDate;
-  TaskPriority
-  selectedPriority = TaskPriority.medium;
-  String?
-  selectedCategory;
+class _AddTaskDialogState extends State<AddTaskDialog> {
+  late TextEditingController titleController; // Task title input
+  late DateTime selectedDate; // Selected due date
+  TaskPriority selectedPriority = TaskPriority.medium; // Priority level
+  String? selectedCategory; // Category assignment
 
-  final SpeechRecognitionService
-  _speechService = SpeechRecognitionService();
-  bool
-  _isListening = false;
+  final SpeechRecognitionService _speechService = SpeechRecognitionService(); // Voice input
+  bool _isListening = false; // Voice input status
 
   @override
   void

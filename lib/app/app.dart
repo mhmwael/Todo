@@ -8,6 +8,7 @@ import '../controllers/category_controller.dart';
 import '../controllers/theme_controller.dart';
 import '../views/main_shell.dart';
 
+// Root widget initializing all Provider controllers and app theme
 class App
     extends
         StatelessWidget {
@@ -20,13 +21,11 @@ class App
   build(
     BuildContext context,
   ) {
+    // Initialize all state management controllers
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create:
-              (
-                _,
-              ) => CategoryController(),
+          create: (_) => CategoryController(), // Category management
         ),
         ChangeNotifierProvider(
           create:

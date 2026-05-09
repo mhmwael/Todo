@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import './app_colors.dart';
 
+// Central theme configuration for light and dark modes
 class AppTheme {
+  // Light theme definition with Material 3 design
   static ThemeData get lightTheme {
     return ThemeData(
-      useMaterial3: true,
+      useMaterial3: true, // Material Design 3
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
         brightness: Brightness.light,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.background, // Default background
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
